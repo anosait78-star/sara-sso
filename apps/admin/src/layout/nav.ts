@@ -23,10 +23,10 @@ export const NAV: NavGroup[] = [
   {
     key: 'crm',
     items: [
-      { key: 'customers', to: '/customers', icon: Users, perm: 'customers.view', ready: false },
-      { key: 'leads', to: '/leads', icon: UserPlus, perm: 'leads.view', ready: false },
-      { key: 'followups', to: '/follow-ups', icon: PhoneCall, perm: 'tasks.view', ready: false },
-      { key: 'appointments', to: '/appointments', icon: CalendarDays, perm: 'appointments.view', ready: false },
+      { key: 'customers', to: '/customers', icon: Users, perm: 'customers.view', ready: true },
+      { key: 'leads', to: '/leads', icon: UserPlus, perm: 'leads.view', ready: true },
+      { key: 'followups', to: '/follow-ups', icon: PhoneCall, perm: 'tasks.view', ready: true },
+      { key: 'appointments', to: '/appointments', icon: CalendarDays, perm: 'appointments.view', ready: true },
     ],
   },
   {

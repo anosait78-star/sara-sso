@@ -1,8 +1,9 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
-import { Bell, ChevronDown, Globe, KeyRound, LogOut, Menu, Search, UserRound, X } from 'lucide-react';
+import { Bell, ChevronDown, Globe, KeyRound, LogOut, Menu, UserRound, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GlobalSearch } from '@/components/GlobalSearch';
 import { Avatar, Button, Spinner } from '@/components/ui';
 import { setLocale, type Locale } from '@/i18n';
 import { useAuth } from '@/lib/auth';
@@ -196,10 +197,7 @@ function Topbar({ onMenu }: { onMenu: () => void }) {
         <Menu className="size-5" />
       </button>
       <img src="/logo-mark.png" alt="SSO" className="h-8 md:hidden" />
-      <div className="hidden h-10 max-w-sm flex-1 items-center gap-2 rounded-[10px] border border-line bg-canvas px-3 text-sm text-ink-3 md:flex">
-        <Search className="size-4" />
-        {t('topbar.search')}
-      </div>
+      <GlobalSearch />
       <div className="flex-1" />
       <button
         type="button"

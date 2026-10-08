@@ -1,7 +1,13 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/react-router';
 import { AppShell, Guard } from './layout/AppShell';
 import { AccountPage, NotFoundPage } from './pages/AccountPage';
+import { AppointmentsPage } from './pages/AppointmentsPage';
 import { AuditLogPage } from './pages/AuditLogPage';
+import { CustomerPage } from './pages/CustomerPage';
+import { CustomersPage } from './pages/CustomersPage';
+import { FollowUpsPage } from './pages/FollowUpsPage';
+import { LeadPage } from './pages/LeadPage';
+import { LeadsPage } from './pages/LeadsPage';
 import { ChangePasswordPage } from './pages/ChangePasswordPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { EmployeesPage } from './pages/EmployeesPage';
@@ -33,6 +39,12 @@ const routeTree = rootRoute.addChildren([
   changePasswordRoute,
   appRoute.addChildren([
     page('/', 'dashboard.view', DashboardPage),
+    page('/customers', 'customers.view', CustomersPage),
+    page('/customers/$id', 'customers.view', CustomerPage),
+    page('/leads', 'leads.view', LeadsPage),
+    page('/leads/$id', 'leads.view', LeadPage),
+    page('/follow-ups', 'tasks.view', FollowUpsPage),
+    page('/appointments', 'appointments.view', AppointmentsPage),
     page('/employees', 'employees.view', EmployeesPage),
     page('/roles', 'roles.view', RolesPage),
     page('/settings', 'settings.view', SettingsPage),

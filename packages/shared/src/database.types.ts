@@ -10,6 +10,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      activity_events: {
+        Row: {
+          actor_name: string | null
+          actor_user_id: string | null
+          customer_id: string | null
+          event_type: string
+          id: number
+          lead_id: string | null
+          occurred_at: string
+          payload: Json
+          summary_ar: string
+          summary_en: string | null
+          visible_to_client: boolean
+        }
+        Insert: {
+          actor_name?: string | null
+          actor_user_id?: string | null
+          customer_id?: string | null
+          event_type: string
+          id?: never
+          lead_id?: string | null
+          occurred_at?: string
+          payload?: Json
+          summary_ar: string
+          summary_en?: string | null
+          visible_to_client?: boolean
+        }
+        Update: {
+          actor_name?: string | null
+          actor_user_id?: string | null
+          customer_id?: string | null
+          event_type?: string
+          id?: never
+          lead_id?: string | null
+          occurred_at?: string
+          payload?: Json
+          summary_ar?: string
+          summary_en?: string | null
+          visible_to_client?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_events_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_settings: {
         Row: {
           key: string
@@ -30,6 +87,89 @@ export type Database = {
           value?: Json
         }
         Relationships: []
+      }
+      appointments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          department_id: string | null
+          employee_id: string | null
+          ends_at: string | null
+          id: string
+          lead_id: string | null
+          location: string | null
+          outcome: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["appointment_status"]
+          title: string
+          type: Database["public"]["Enums"]["appointment_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          department_id?: string | null
+          employee_id?: string | null
+          ends_at?: string | null
+          id?: string
+          lead_id?: string | null
+          location?: string | null
+          outcome?: string | null
+          starts_at: string
+          status?: Database["public"]["Enums"]["appointment_status"]
+          title: string
+          type?: Database["public"]["Enums"]["appointment_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          department_id?: string | null
+          employee_id?: string | null
+          ends_at?: string | null
+          id?: string
+          lead_id?: string | null
+          location?: string | null
+          outcome?: string | null
+          starts_at?: string
+          status?: Database["public"]["Enums"]["appointment_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["appointment_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       audit_logs: {
         Row: {
@@ -84,6 +224,160 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      customer_contacts: {
+        Row: {
+          created_at: string
+          customer_id: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          role: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          role?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_contacts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          address: string | null
+          alt_phone: string | null
+          app_access: Database["public"]["Enums"]["app_access"]
+          birth_date: string | null
+          city: string | null
+          commercial_register_no: string | null
+          company_name: string | null
+          converted_from_lead_id: string | null
+          created_at: string
+          created_by: string | null
+          customer_no: string | null
+          customer_type: Database["public"]["Enums"]["customer_type"]
+          deleted_at: string | null
+          department_id: string | null
+          email: string | null
+          full_name: string
+          id: string
+          national_id: string | null
+          owner_employee_id: string | null
+          phone: string
+          source: string | null
+          status: Database["public"]["Enums"]["customer_status"]
+          tags: string[]
+          tax_no: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          alt_phone?: string | null
+          app_access?: Database["public"]["Enums"]["app_access"]
+          birth_date?: string | null
+          city?: string | null
+          commercial_register_no?: string | null
+          company_name?: string | null
+          converted_from_lead_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_no?: string | null
+          customer_type?: Database["public"]["Enums"]["customer_type"]
+          deleted_at?: string | null
+          department_id?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          national_id?: string | null
+          owner_employee_id?: string | null
+          phone: string
+          source?: string | null
+          status?: Database["public"]["Enums"]["customer_status"]
+          tags?: string[]
+          tax_no?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          alt_phone?: string | null
+          app_access?: Database["public"]["Enums"]["app_access"]
+          birth_date?: string | null
+          city?: string | null
+          commercial_register_no?: string | null
+          company_name?: string | null
+          converted_from_lead_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_no?: string | null
+          customer_type?: Database["public"]["Enums"]["customer_type"]
+          deleted_at?: string | null
+          department_id?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          national_id?: string | null
+          owner_employee_id?: string | null
+          phone?: string
+          source?: string | null
+          status?: Database["public"]["Enums"]["customer_status"]
+          tags?: string[]
+          tax_no?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_converted_from_lead_fkey"
+            columns: ["converted_from_lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customers_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customers_owner_employee_id_fkey"
+            columns: ["owner_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       departments: {
         Row: {
@@ -172,6 +466,302 @@ export type Database = {
             columns: ["role_id"]
             isOneToOne: false
             referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_activities: {
+        Row: {
+          actor_employee_id: string | null
+          created_at: string
+          from_stage_id: string | null
+          id: string
+          lead_id: string
+          occurred_at: string
+          summary: string | null
+          to_stage_id: string | null
+          type: Database["public"]["Enums"]["lead_activity_type"]
+        }
+        Insert: {
+          actor_employee_id?: string | null
+          created_at?: string
+          from_stage_id?: string | null
+          id?: string
+          lead_id: string
+          occurred_at?: string
+          summary?: string | null
+          to_stage_id?: string | null
+          type: Database["public"]["Enums"]["lead_activity_type"]
+        }
+        Update: {
+          actor_employee_id?: string | null
+          created_at?: string
+          from_stage_id?: string | null
+          id?: string
+          lead_id?: string
+          occurred_at?: string
+          summary?: string | null
+          to_stage_id?: string | null
+          type?: Database["public"]["Enums"]["lead_activity_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_activities_actor_employee_id_fkey"
+            columns: ["actor_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activities_from_stage_id_fkey"
+            columns: ["from_stage_id"]
+            isOneToOne: false
+            referencedRelation: "lead_stages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activities_to_stage_id_fkey"
+            columns: ["to_stage_id"]
+            isOneToOne: false
+            referencedRelation: "lead_stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_stages: {
+        Row: {
+          color: string
+          id: string
+          is_active: boolean
+          is_pipeline: boolean
+          key: string
+          name_ar: string
+          name_en: string | null
+          requires: string
+          sort_order: number
+          stage_category: Database["public"]["Enums"]["stage_category"]
+        }
+        Insert: {
+          color?: string
+          id?: string
+          is_active?: boolean
+          is_pipeline?: boolean
+          key: string
+          name_ar: string
+          name_en?: string | null
+          requires?: string
+          sort_order?: number
+          stage_category: Database["public"]["Enums"]["stage_category"]
+        }
+        Update: {
+          color?: string
+          id?: string
+          is_active?: boolean
+          is_pipeline?: boolean
+          key?: string
+          name_ar?: string
+          name_en?: string | null
+          requires?: string
+          sort_order?: number
+          stage_category?: Database["public"]["Enums"]["stage_category"]
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          budget: number | null
+          company_name: string | null
+          converted_at: string | null
+          converted_customer_id: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          department_id: string | null
+          email: string | null
+          full_name: string
+          id: string
+          interest_details: string | null
+          interest_line: string | null
+          lead_no: string | null
+          lost_note: string | null
+          lost_reason: string | null
+          next_follow_up_at: string | null
+          owner_employee_id: string | null
+          phone: string | null
+          postponed_until: string | null
+          source: string | null
+          stage_id: string
+          updated_at: string
+        }
+        Insert: {
+          budget?: number | null
+          company_name?: string | null
+          converted_at?: string | null
+          converted_customer_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          department_id?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          interest_details?: string | null
+          interest_line?: string | null
+          lead_no?: string | null
+          lost_note?: string | null
+          lost_reason?: string | null
+          next_follow_up_at?: string | null
+          owner_employee_id?: string | null
+          phone?: string | null
+          postponed_until?: string | null
+          source?: string | null
+          stage_id: string
+          updated_at?: string
+        }
+        Update: {
+          budget?: number | null
+          company_name?: string | null
+          converted_at?: string | null
+          converted_customer_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          department_id?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          interest_details?: string | null
+          interest_line?: string | null
+          lead_no?: string | null
+          lost_note?: string | null
+          lost_reason?: string | null
+          next_follow_up_at?: string | null
+          owner_employee_id?: string | null
+          phone?: string | null
+          postponed_until?: string | null
+          source?: string | null
+          stage_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_converted_customer_id_fkey"
+            columns: ["converted_customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_owner_employee_id_fkey"
+            columns: ["owner_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "lead_stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lookups: {
+        Row: {
+          id: string
+          is_active: boolean
+          key: string
+          name_ar: string
+          name_en: string | null
+          sort_order: number
+          type: string
+        }
+        Insert: {
+          id?: string
+          is_active?: boolean
+          key: string
+          name_ar: string
+          name_en?: string | null
+          sort_order?: number
+          type: string
+        }
+        Update: {
+          id?: string
+          is_active?: boolean
+          key?: string
+          name_ar?: string
+          name_en?: string | null
+          sort_order?: number
+          type?: string
+        }
+        Relationships: []
+      }
+      notes: {
+        Row: {
+          author_employee_id: string | null
+          body: string
+          created_at: string
+          customer_id: string | null
+          id: string
+          lead_id: string | null
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          author_employee_id?: string | null
+          body: string
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          lead_id?: string | null
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          author_employee_id?: string | null
+          body?: string
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          lead_id?: string | null
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_author_employee_id_fkey"
+            columns: ["author_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
             referencedColumns: ["id"]
           },
         ]
@@ -311,12 +901,127 @@ export type Database = {
         }
         Relationships: []
       }
+      tasks: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          department_id: string | null
+          description: string | null
+          due_at: string | null
+          id: string
+          kind: Database["public"]["Enums"]["task_kind"]
+          lead_id: string | null
+          outcome: string | null
+          priority: Database["public"]["Enums"]["task_priority"]
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          department_id?: string | null
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["task_kind"]
+          lead_id?: string | null
+          outcome?: string | null
+          priority?: Database["public"]["Enums"]["task_priority"]
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          department_id?: string | null
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["task_kind"]
+          lead_id?: string | null
+          outcome?: string | null
+          priority?: Database["public"]["Enums"]["task_priority"]
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      change_lead_stage: {
+        Args: {
+          p_follow_up_at?: string
+          p_lead_id: string
+          p_lost_reason?: string
+          p_note?: string
+          p_stage_id: string
+        }
+        Returns: undefined
+      }
       clear_must_change_password: { Args: never; Returns: undefined }
+      convert_lead_to_customer: {
+        Args: {
+          p_customer_type?: Database["public"]["Enums"]["customer_type"]
+          p_lead_id: string
+          p_merge_into?: string
+          p_national_id?: string
+        }
+        Returns: string
+      }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       get_my_permissions: {
         Args: never
@@ -342,14 +1047,66 @@ export type Database = {
           role_name_en: string
         }[]
       }
+      global_search: {
+        Args: { p_query: string }
+        Returns: {
+          id: string
+          kind: string
+          number: string
+          subtitle: string
+          title: string
+        }[]
+      }
+      log_lead_activity: {
+        Args: {
+          p_lead_id: string
+          p_next_follow_up_at?: string
+          p_summary: string
+          p_type: Database["public"]["Enums"]["lead_activity_type"]
+        }
+        Returns: string
+      }
       set_role_permissions: {
         Args: { p_grants: Json; p_role_id: string }
         Returns: undefined
       }
     }
     Enums: {
+      app_access: "none" | "active" | "suspended"
+      appointment_status: "scheduled" | "done" | "cancelled" | "no_show"
+      appointment_type:
+        | "meeting"
+        | "call"
+        | "property_visit"
+        | "gov_visit"
+        | "other"
+      customer_status:
+        | "self_registered"
+        | "pending_link"
+        | "active"
+        | "inactive"
+      customer_type: "individual" | "company"
       employee_status: "invited" | "active" | "suspended"
+      lead_activity_type:
+        | "created"
+        | "call"
+        | "meeting"
+        | "whatsapp"
+        | "email"
+        | "note"
+        | "stage_change"
+        | "converted"
       permission_scope: "own" | "department" | "all"
+      stage_category: "open" | "won" | "lost" | "on_hold"
+      task_kind:
+        | "task"
+        | "follow_up"
+        | "call"
+        | "inquiry"
+        | "renewal"
+        | "step_work"
+      task_priority: "low" | "normal" | "high" | "urgent"
+      task_status: "todo" | "in_progress" | "done" | "cancelled"
       user_type: "staff" | "client"
     }
     CompositeTypes: {
@@ -478,8 +1235,45 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_access: ["none", "active", "suspended"],
+      appointment_status: ["scheduled", "done", "cancelled", "no_show"],
+      appointment_type: [
+        "meeting",
+        "call",
+        "property_visit",
+        "gov_visit",
+        "other",
+      ],
+      customer_status: [
+        "self_registered",
+        "pending_link",
+        "active",
+        "inactive",
+      ],
+      customer_type: ["individual", "company"],
       employee_status: ["invited", "active", "suspended"],
+      lead_activity_type: [
+        "created",
+        "call",
+        "meeting",
+        "whatsapp",
+        "email",
+        "note",
+        "stage_change",
+        "converted",
+      ],
       permission_scope: ["own", "department", "all"],
+      stage_category: ["open", "won", "lost", "on_hold"],
+      task_kind: [
+        "task",
+        "follow_up",
+        "call",
+        "inquiry",
+        "renewal",
+        "step_work",
+      ],
+      task_priority: ["low", "normal", "high", "urgent"],
+      task_status: ["todo", "in_progress", "done", "cancelled"],
       user_type: ["staff", "client"],
     },
   },

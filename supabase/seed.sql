@@ -46,3 +46,59 @@ begin
   end loop;
 end;
 $$;
+
+-- ---------------------------------------------------------------------
+-- Sample CRM data (Phase 2) — owners: nourhan (sales), mohamed/mona (operations)
+-- ---------------------------------------------------------------------
+do $$
+declare
+  e_nourhan uuid := (select id from public.employees where profile_id = '44444444-4444-4444-8444-444444444444');
+  e_mohamed uuid := (select id from public.employees where profile_id = '33333333-3333-4333-8333-333333333333');
+  e_mona uuid := (select id from public.employees where profile_id = '22222222-2222-4222-8222-222222222222');
+  st record;
+  c1 uuid; c2 uuid; c3 uuid; l1 uuid; l2 uuid;
+begin
+  insert into public.customers (customer_type, full_name, national_id, phone, email, city, owner_employee_id, source)
+  values ('individual', 'أحمد محمد عبدالله السيد', '29003141201234', '+201002345678', 'ahmed.m@example.com', 'القاهرة الجديدة', e_mohamed, 'facebook')
+  returning id into c1;
+  insert into public.customers (customer_type, full_name, company_name, commercial_register_no, phone, city, owner_employee_id, source)
+  values ('company', 'شريف نبيل', 'شركة النيل للتوريدات', '184522', '+201228764410', 'المعادي', e_mona, 'referral')
+  returning id into c2;
+  insert into public.customers (customer_type, full_name, phone, city, owner_employee_id, source)
+  values ('individual', 'هالة يوسف إبراهيم', '+201115550192', 'مدينة نصر', e_nourhan, 'whatsapp')
+  returning id into c3;
+  insert into public.customer_contacts (customer_id, name, role, phone) values (c2, 'مروة سامي', 'مسؤولة الحسابات', '+201001112233');
+
+  insert into public.notes (customer_id, body, author_employee_id) values (c1, 'يفضل التواصل بعد الساعة 4 مساءً.', e_mohamed);
+  insert into public.tasks (kind, title, assigned_to, due_at, priority, customer_id)
+  values ('follow_up', 'متابعة: تجديد تأمين السيارة', e_nourhan, now() + interval '2 days', 'high', c3),
+         ('follow_up', 'متابعة: أوراق السجل التجاري', e_mohamed, now() - interval '1 day', 'urgent', c1);
+  insert into public.appointments (type, title, starts_at, ends_at, location, customer_id, employee_id)
+  values ('gov_visit', 'زيارة مكتب السجل التجاري', date_trunc('day', now()) + interval '2 days 10 hours', date_trunc('day', now()) + interval '2 days 11 hours', 'مصلحة السجل التجاري — التجمع', c1, e_mohamed);
+
+  for st in select * from (values
+    ('ياسر عبدالحميد', '+201091112233', 'company_formation', 'تأسيس شركة تضامن', 'facebook', 'new'),
+    ('سلمى رأفت', '+201002223344', 'insurance', 'تأمين طبي عائلي', 'referral', 'new'),
+    ('كريم فؤاد السيد', '+201097712210', 'real_estate', 'شقة 3 غرف — التجمع الخامس', 'exhibition', 'contacted'),
+    ('رانيا شوقي', '+201223334455', 'insurance', 'تأمين سيارة', 'whatsapp', 'interested'),
+    ('عمر الشريف', '+201114445566', 'real_estate', 'فيلا — الشيخ زايد', 'exhibition', 'offer_sent'),
+    ('ليلى منصور', '+201005556677', 'company_formation', 'تأسيس شركة فردية', 'facebook', 'waiting_decision')
+  ) as v(name, phone, line, details, source, stage)
+  loop
+    insert into public.leads (full_name, phone, interest_line, interest_details, source, stage_id, owner_employee_id)
+    values (st.name, st.phone, st.line, st.details, st.source, (select id from public.lead_stages where key = st.stage), e_nourhan)
+    returning id into l1;
+    if st.stage = 'contacted' then
+      insert into public.tasks (kind, title, assigned_to, due_at, priority, lead_id)
+      values ('follow_up', 'متابعة: إرسال 3 عروض مطابقة', e_nourhan, now() - interval '20 hours', 'high', l1);
+      insert into public.lead_activities (lead_id, type, summary, actor_employee_id)
+      values (l1, 'call', 'مهتم بالدور المتوسط، يفضل الاستلام 2027', e_nourhan);
+    end if;
+  end loop;
+
+  -- a lead owned by operations (not visible to sales with "own" scope)
+  insert into public.leads (full_name, phone, interest_line, interest_details, source, owner_employee_id)
+  values ('مصنع الأمل للبلاستيك', '+201559023381', 'loans', 'قرض رأس مال عامل 1.5M', 'website', e_mohamed)
+  returning id into l2;
+end;
+$$;
