@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.turbo/
+*.log
+.DS_Store
+~$*
+
+# env files (never commit keys)
+.env
+.env.*
+!.env.example
+
+# supabase local
+supabase/.branches
+supabase/.temp
+supabase/.env
+supabase/functions/.env

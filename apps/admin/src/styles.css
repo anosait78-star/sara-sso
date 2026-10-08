@@ -1,0 +1,51 @@
+@import 'tailwindcss';
+
+/* Design tokens — extracted from the SSO logo (see PROJECT_PLAN.md §16) */
+@theme {
+  --font-sans: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+  --font-latin: 'Montserrat', 'IBM Plex Sans Arabic', sans-serif;
+
+  --color-navy: #0b2a55;
+  --color-navy-700: #12376e;
+  --color-brand: #0057e6;
+  --color-brand-50: #e8f1fe;
+  --color-brand-100: #c9defd;
+  --color-brand-200: #8fbdf9;
+  --color-sky: #22a0f5;
+
+  --color-canvas: #f4f7fb;
+  --color-surface: #ffffff;
+  --color-muted: #eef3fa;
+  --color-line: #e3e9f2;
+
+  --color-ink: #0f1e36;
+  --color-ink-2: #5b6b84;
+  --color-ink-3: #8a98ae;
+
+  --color-success: #12a150;
+  --color-warning: #e8a317;
+  --color-danger: #d93b3b;
+
+  --radius-card: 14px;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-canvas text-ink antialiased;
+    font-family: var(--font-sans);
+  }
+  /* numbers, phones and codes keep LTR order inside RTL text */
+  .ltr {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}
