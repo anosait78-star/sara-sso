@@ -13,7 +13,11 @@ import { DashboardPage } from './pages/DashboardPage';
 import { EmployeesPage } from './pages/EmployeesPage';
 import { LoginPage } from './pages/LoginPage';
 import { RolesPage } from './pages/RolesPage';
+import { ServicePage } from './pages/ServicePage';
+import { ServicesPage } from './pages/ServicesPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { WorkflowBuilderPage } from './pages/WorkflowBuilderPage';
+import { WorkflowIndexPage } from './pages/WorkflowIndexPage';
 
 const rootRoute = createRootRoute({ component: Outlet, notFoundComponent: NotFoundPage });
 
@@ -45,6 +49,11 @@ const routeTree = rootRoute.addChildren([
     page('/leads/$id', 'leads.view', LeadPage),
     page('/follow-ups', 'tasks.view', FollowUpsPage),
     page('/appointments', 'appointments.view', AppointmentsPage),
+    page('/services', 'services_config.view', ServicesPage),
+    page('/services/$id', 'services_config.view', ServicePage),
+    page('/services/$id/workflow', 'services_config.view', WorkflowBuilderPage),
+    page('/services/$id/workflow/$workflowId', 'services_config.view', WorkflowBuilderPage),
+    page('/workflow', 'services_config.view', WorkflowIndexPage),
     page('/employees', 'employees.view', EmployeesPage),
     page('/roles', 'roles.view', RolesPage),
     page('/settings', 'settings.view', SettingsPage),

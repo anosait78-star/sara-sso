@@ -409,6 +409,51 @@ export type Database = {
         }
         Relationships: []
       }
+      document_types: {
+        Row: {
+          allowed_mime: string[]
+          created_at: string
+          description_ar: string | null
+          has_expiry: boolean
+          id: string
+          is_active: boolean
+          key: string
+          max_size_mb: number
+          name_ar: string
+          name_en: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          allowed_mime?: string[]
+          created_at?: string
+          description_ar?: string | null
+          has_expiry?: boolean
+          id?: string
+          is_active?: boolean
+          key: string
+          max_size_mb?: number
+          name_ar: string
+          name_en?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          allowed_mime?: string[]
+          created_at?: string
+          description_ar?: string | null
+          has_expiry?: boolean
+          id?: string
+          is_active?: boolean
+          key?: string
+          max_size_mb?: number
+          name_ar?: string
+          name_en?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       employees: {
         Row: {
           created_at: string
@@ -832,6 +877,122 @@ export type Database = {
         }
         Relationships: []
       }
+      required_documents: {
+        Row: {
+          created_at: string
+          document_type_id: string
+          id: string
+          instructions_ar: string | null
+          instructions_en: string | null
+          is_required: boolean
+          max_files: number
+          sort_order: number
+          updated_at: string
+          workflow_step_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_type_id: string
+          id?: string
+          instructions_ar?: string | null
+          instructions_en?: string | null
+          is_required?: boolean
+          max_files?: number
+          sort_order?: number
+          updated_at?: string
+          workflow_step_id: string
+        }
+        Update: {
+          created_at?: string
+          document_type_id?: string
+          id?: string
+          instructions_ar?: string | null
+          instructions_en?: string | null
+          is_required?: boolean
+          max_files?: number
+          sort_order?: number
+          updated_at?: string
+          workflow_step_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "required_documents_document_type_id_fkey"
+            columns: ["document_type_id"]
+            isOneToOne: false
+            referencedRelation: "document_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "required_documents_workflow_step_id_fkey"
+            columns: ["workflow_step_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      required_fields: {
+        Row: {
+          created_at: string
+          field_key: string
+          field_type: Database["public"]["Enums"]["field_type"]
+          filled_by: Database["public"]["Enums"]["field_filler"]
+          help_text: string | null
+          id: string
+          is_required: boolean
+          label_ar: string
+          label_en: string | null
+          maps_to: string | null
+          options: Json
+          sort_order: number
+          updated_at: string
+          validation: Json
+          workflow_step_id: string
+        }
+        Insert: {
+          created_at?: string
+          field_key: string
+          field_type?: Database["public"]["Enums"]["field_type"]
+          filled_by?: Database["public"]["Enums"]["field_filler"]
+          help_text?: string | null
+          id?: string
+          is_required?: boolean
+          label_ar: string
+          label_en?: string | null
+          maps_to?: string | null
+          options?: Json
+          sort_order?: number
+          updated_at?: string
+          validation?: Json
+          workflow_step_id: string
+        }
+        Update: {
+          created_at?: string
+          field_key?: string
+          field_type?: Database["public"]["Enums"]["field_type"]
+          filled_by?: Database["public"]["Enums"]["field_filler"]
+          help_text?: string | null
+          id?: string
+          is_required?: boolean
+          label_ar?: string
+          label_en?: string | null
+          maps_to?: string | null
+          options?: Json
+          sort_order?: number
+          updated_at?: string
+          validation?: Json
+          workflow_step_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "required_fields_workflow_step_id_fkey"
+            columns: ["workflow_step_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           permission_id: string
@@ -900,6 +1061,186 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      service_categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          key: string
+          name_ar: string
+          name_en: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          name_ar: string
+          name_en?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          name_ar?: string
+          name_en?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      service_workflows: {
+        Row: {
+          archived_at: string | null
+          based_on_workflow_id: string | null
+          change_note: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          published_at: string | null
+          published_by: string | null
+          service_id: string
+          status: Database["public"]["Enums"]["workflow_status"]
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          archived_at?: string | null
+          based_on_workflow_id?: string | null
+          change_note?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          published_at?: string | null
+          published_by?: string | null
+          service_id: string
+          status?: Database["public"]["Enums"]["workflow_status"]
+          updated_at?: string
+          version: number
+        }
+        Update: {
+          archived_at?: string | null
+          based_on_workflow_id?: string | null
+          change_note?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          published_at?: string | null
+          published_by?: string | null
+          service_id?: string
+          status?: Database["public"]["Enums"]["workflow_status"]
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_workflows_based_on_workflow_id_fkey"
+            columns: ["based_on_workflow_id"]
+            isOneToOne: false
+            referencedRelation: "service_workflows"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_workflows_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          allow_client_request: boolean
+          category_id: string
+          code: string
+          created_at: string
+          created_by: string | null
+          currency: string
+          current_workflow_id: string | null
+          default_price: number | null
+          deleted_at: string | null
+          description_ar: string | null
+          description_en: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          is_client_visible: boolean
+          module_key: Database["public"]["Enums"]["service_module"]
+          name_ar: string
+          name_en: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          allow_client_request?: boolean
+          category_id: string
+          code: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          current_workflow_id?: string | null
+          default_price?: number | null
+          deleted_at?: string | null
+          description_ar?: string | null
+          description_en?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_client_visible?: boolean
+          module_key?: Database["public"]["Enums"]["service_module"]
+          name_ar: string
+          name_en?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          allow_client_request?: boolean
+          category_id?: string
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          current_workflow_id?: string | null
+          default_price?: number | null
+          deleted_at?: string | null
+          description_ar?: string | null
+          description_en?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_client_visible?: boolean
+          module_key?: Database["public"]["Enums"]["service_module"]
+          name_ar?: string
+          name_en?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "services_current_workflow_fkey"
+            columns: ["current_workflow_id"]
+            isOneToOne: false
+            referencedRelation: "service_workflows"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {
@@ -997,6 +1338,135 @@ export type Database = {
           },
         ]
       }
+      workflow_steps: {
+        Row: {
+          approver_role_id: string | null
+          assignee_department_id: string | null
+          assignee_employee_id: string | null
+          assignee_role_id: string | null
+          assignee_type: Database["public"]["Enums"]["assignee_type"]
+          auto_create_task: boolean
+          client_action_required: boolean
+          client_instructions: string | null
+          completion_status_label_ar: string | null
+          completion_status_label_en: string | null
+          conditions: Json | null
+          created_at: string
+          description: string | null
+          duration_unit: Database["public"]["Enums"]["duration_unit"]
+          duration_value: number
+          id: string
+          is_client_visible: boolean
+          is_required: boolean
+          name_ar: string
+          name_en: string | null
+          requires_approval: boolean
+          sets_request_status:
+            | Database["public"]["Enums"]["request_status"]
+            | null
+          sort_order: number
+          step_key: string
+          updated_at: string
+          workflow_id: string
+        }
+        Insert: {
+          approver_role_id?: string | null
+          assignee_department_id?: string | null
+          assignee_employee_id?: string | null
+          assignee_role_id?: string | null
+          assignee_type?: Database["public"]["Enums"]["assignee_type"]
+          auto_create_task?: boolean
+          client_action_required?: boolean
+          client_instructions?: string | null
+          completion_status_label_ar?: string | null
+          completion_status_label_en?: string | null
+          conditions?: Json | null
+          created_at?: string
+          description?: string | null
+          duration_unit?: Database["public"]["Enums"]["duration_unit"]
+          duration_value?: number
+          id?: string
+          is_client_visible?: boolean
+          is_required?: boolean
+          name_ar: string
+          name_en?: string | null
+          requires_approval?: boolean
+          sets_request_status?:
+            | Database["public"]["Enums"]["request_status"]
+            | null
+          sort_order: number
+          step_key: string
+          updated_at?: string
+          workflow_id: string
+        }
+        Update: {
+          approver_role_id?: string | null
+          assignee_department_id?: string | null
+          assignee_employee_id?: string | null
+          assignee_role_id?: string | null
+          assignee_type?: Database["public"]["Enums"]["assignee_type"]
+          auto_create_task?: boolean
+          client_action_required?: boolean
+          client_instructions?: string | null
+          completion_status_label_ar?: string | null
+          completion_status_label_en?: string | null
+          conditions?: Json | null
+          created_at?: string
+          description?: string | null
+          duration_unit?: Database["public"]["Enums"]["duration_unit"]
+          duration_value?: number
+          id?: string
+          is_client_visible?: boolean
+          is_required?: boolean
+          name_ar?: string
+          name_en?: string | null
+          requires_approval?: boolean
+          sets_request_status?:
+            | Database["public"]["Enums"]["request_status"]
+            | null
+          sort_order?: number
+          step_key?: string
+          updated_at?: string
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_steps_approver_role_id_fkey"
+            columns: ["approver_role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_steps_assignee_department_id_fkey"
+            columns: ["assignee_department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_steps_assignee_employee_id_fkey"
+            columns: ["assignee_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_steps_assignee_role_id_fkey"
+            columns: ["assignee_role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_steps_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "service_workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1013,6 +1483,10 @@ export type Database = {
         Returns: undefined
       }
       clear_must_change_password: { Args: never; Returns: undefined }
+      clone_workflow_as_draft: {
+        Args: { p_change_note?: string; p_workflow_id: string }
+        Returns: string
+      }
       convert_lead_to_customer: {
         Args: {
           p_customer_type?: Database["public"]["Enums"]["customer_type"]
@@ -1022,7 +1496,9 @@ export type Database = {
         }
         Returns: string
       }
+      create_workflow_draft: { Args: { p_service_id: string }; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      delete_workflow_step: { Args: { p_step_id: string }; Returns: undefined }
       get_my_permissions: {
         Args: never
         Returns: {
@@ -1057,6 +1533,15 @@ export type Database = {
           title: string
         }[]
       }
+      insert_workflow_step: {
+        Args: {
+          p_name_ar: string
+          p_name_en?: string
+          p_position: number
+          p_workflow_id: string
+        }
+        Returns: string
+      }
       log_lead_activity: {
         Args: {
           p_lead_id: string
@@ -1066,9 +1551,44 @@ export type Database = {
         }
         Returns: string
       }
+      publish_workflow: {
+        Args: { p_change_note?: string; p_workflow_id: string }
+        Returns: Json
+      }
+      reorder_workflow_steps: {
+        Args: { p_step_ids: string[]; p_workflow_id: string }
+        Returns: undefined
+      }
       set_role_permissions: {
         Args: { p_grants: Json; p_role_id: string }
         Returns: undefined
+      }
+      validate_workflow: {
+        Args: { p_workflow_id: string }
+        Returns: {
+          detail: string
+          issue: string
+          step_id: string
+          step_key: string
+          step_name: string
+        }[]
+      }
+      workflow_diff: {
+        Args: { p_from: string; p_to: string }
+        Returns: {
+          change: string
+          detail: Json
+          item_key: string
+          item_name_ar: string
+          item_name_en: string
+          step_key: string
+          step_name_ar: string
+          step_name_en: string
+        }[]
+      }
+      workflow_running_requests: {
+        Args: { p_workflow_id: string }
+        Returns: number
       }
     }
     Enums: {
@@ -1080,13 +1600,28 @@ export type Database = {
         | "property_visit"
         | "gov_visit"
         | "other"
+      assignee_type: "role" | "department" | "employee" | "request_owner"
       customer_status:
         | "self_registered"
         | "pending_link"
         | "active"
         | "inactive"
       customer_type: "individual" | "company"
+      duration_unit: "hours" | "days" | "business_days"
       employee_status: "invited" | "active" | "suspended"
+      field_filler: "client" | "staff"
+      field_type:
+        | "text"
+        | "textarea"
+        | "number"
+        | "money"
+        | "date"
+        | "select"
+        | "multiselect"
+        | "checkbox"
+        | "phone"
+        | "email"
+        | "national_id"
       lead_activity_type:
         | "created"
         | "call"
@@ -1097,6 +1632,20 @@ export type Database = {
         | "stage_change"
         | "converted"
       permission_scope: "own" | "department" | "all"
+      request_status:
+        | "draft"
+        | "submitted"
+        | "in_progress"
+        | "waiting_client"
+        | "on_hold"
+        | "completed"
+        | "cancelled"
+      service_module:
+        | "generic"
+        | "real_estate"
+        | "insurance"
+        | "company_formation"
+        | "loans"
       stage_category: "open" | "won" | "lost" | "on_hold"
       task_kind:
         | "task"
@@ -1108,6 +1657,7 @@ export type Database = {
       task_priority: "low" | "normal" | "high" | "urgent"
       task_status: "todo" | "in_progress" | "done" | "cancelled"
       user_type: "staff" | "client"
+      workflow_status: "draft" | "published" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1244,6 +1794,7 @@ export const Constants = {
         "gov_visit",
         "other",
       ],
+      assignee_type: ["role", "department", "employee", "request_owner"],
       customer_status: [
         "self_registered",
         "pending_link",
@@ -1251,7 +1802,22 @@ export const Constants = {
         "inactive",
       ],
       customer_type: ["individual", "company"],
+      duration_unit: ["hours", "days", "business_days"],
       employee_status: ["invited", "active", "suspended"],
+      field_filler: ["client", "staff"],
+      field_type: [
+        "text",
+        "textarea",
+        "number",
+        "money",
+        "date",
+        "select",
+        "multiselect",
+        "checkbox",
+        "phone",
+        "email",
+        "national_id",
+      ],
       lead_activity_type: [
         "created",
         "call",
@@ -1263,6 +1829,22 @@ export const Constants = {
         "converted",
       ],
       permission_scope: ["own", "department", "all"],
+      request_status: [
+        "draft",
+        "submitted",
+        "in_progress",
+        "waiting_client",
+        "on_hold",
+        "completed",
+        "cancelled",
+      ],
+      service_module: [
+        "generic",
+        "real_estate",
+        "insurance",
+        "company_formation",
+        "loans",
+      ],
       stage_category: ["open", "won", "lost", "on_hold"],
       task_kind: [
         "task",
@@ -1275,6 +1857,7 @@ export const Constants = {
       task_priority: ["low", "normal", "high", "urgent"],
       task_status: ["todo", "in_progress", "done", "cancelled"],
       user_type: ["staff", "client"],
+      workflow_status: ["draft", "published", "archived"],
     },
   },
 } as const

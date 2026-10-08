@@ -27,6 +27,10 @@ export function errorKey(err: unknown): string {
   if (/only a super admin/i.test(msg)) return 'errors.superAdminOnly';
   if (/at least one active super admin/i.test(msg)) return 'errors.lastSuperAdmin';
   if (/system role/i.test(msg)) return 'errors.systemRole';
+  if (e?.code === '55000' || /cannot be modified/i.test(msg)) return 'errors.workflowLocked';
+  if (/draft exists/i.test(msg)) return 'errors.draftExists';
+  if (/workflow is not valid/i.test(msg)) return 'errors.workflowInvalid';
+  if (/services_active_needs_workflow/i.test(msg)) return 'errors.needsWorkflow';
   if (e?.code === '23503' || /violates foreign key/i.test(msg)) return 'errors.roleInUse';
   if (e?.code === '42501' || /permission denied|row-level security|forbidden/i.test(msg)) return 'errors.forbidden';
   if (e?.code === '23505' || /already (registered|exists)|duplicate/i.test(msg)) return 'errors.duplicate';

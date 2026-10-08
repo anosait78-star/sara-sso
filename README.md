@@ -50,7 +50,7 @@ pnpm dev                 # لوحة الإدارة على http://localhost:5173
 | الأمر | الوظيفة |
 |---|---|
 | `pnpm db:reset` | إعادة بناء قاعدة البيانات المحلية من الـmigrations + seed |
-| `pnpm db:test` | اختبارات pgTAP (الصلاحيات، RLS، التدقيق) |
+| `pnpm db:test` | اختبارات pgTAP (الصلاحيات، RLS، التدقيق، CRM، محرك الـWorkflow) |
 | `pnpm db:types` | توليد أنواع TypeScript من قاعدة البيانات إلى `packages/shared` |
 | `pnpm typecheck` | فحص الأنواع لكل الحزم |
 | `pnpm --filter @sso/shared test` | اختبارات أدوات التحقق |

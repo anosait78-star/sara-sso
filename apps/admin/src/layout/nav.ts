@@ -56,8 +56,8 @@ export const NAV: NavGroup[] = [
   {
     key: 'config',
     items: [
-      { key: 'services', to: '/services', icon: Layers, perm: 'services_config.view', ready: false },
-      { key: 'workflow', to: '/workflow', icon: Workflow, perm: 'services_config.view', ready: false },
+      { key: 'services', to: '/services', icon: Layers, perm: 'services_config.view', ready: true },
+      { key: 'workflow', to: '/workflow', icon: Workflow, perm: 'services_config.view', ready: true },
       { key: 'employees', to: '/employees', icon: IdCard, perm: 'employees.view', ready: true },
       { key: 'roles', to: '/roles', icon: KeyRound, perm: 'roles.view', ready: true },
       { key: 'auditLog', to: '/audit-log', icon: ScrollText, perm: 'audit_logs.view', ready: true },
