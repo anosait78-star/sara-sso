@@ -12,10 +12,13 @@ import { ChangePasswordPage } from './pages/ChangePasswordPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { EmployeesPage } from './pages/EmployeesPage';
 import { LoginPage } from './pages/LoginPage';
+import { RequestPage } from './pages/RequestPage';
+import { RequestsPage } from './pages/RequestsPage';
 import { RolesPage } from './pages/RolesPage';
 import { ServicePage } from './pages/ServicePage';
 import { ServicesPage } from './pages/ServicesPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { TasksPage } from './pages/TasksPage';
 import { WorkflowBuilderPage } from './pages/WorkflowBuilderPage';
 import { WorkflowIndexPage } from './pages/WorkflowIndexPage';
 
@@ -49,6 +52,9 @@ const routeTree = rootRoute.addChildren([
     page('/leads/$id', 'leads.view', LeadPage),
     page('/follow-ups', 'tasks.view', FollowUpsPage),
     page('/appointments', 'appointments.view', AppointmentsPage),
+    page('/requests', 'service_requests.view', RequestsPage),
+    page('/requests/$id', 'service_requests.view', RequestPage),
+    page('/tasks', 'tasks.view', TasksPage),
     page('/services', 'services_config.view', ServicesPage),
     page('/services/$id', 'services_config.view', ServicePage),
     page('/services/$id/workflow', 'services_config.view', WorkflowBuilderPage),

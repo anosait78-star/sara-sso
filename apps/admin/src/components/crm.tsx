@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
   CalendarClock, CalendarDays, Check, ChevronsUp, ChevronUp, CircleDot, Equal, History, MessageCircle, Phone, Plus, StickyNote,
 } from 'lucide-react';
@@ -11,8 +12,9 @@ import { dueBucket, fmtDate, fromLocalInput, telHref, toLocalInput, useEmployeeO
 import { supabase } from '@/lib/supabase';
 import { cn, errorKey } from '@/lib/utils';
 
-type Ref = { customerId?: string; leadId?: string };
-const refFilter = (r: Ref) => (r.customerId ? { col: 'customer_id', val: r.customerId } : { col: 'lead_id', val: r.leadId! });
+type Ref = { customerId?: string; leadId?: string; requestId?: string };
+const refFilter = (r: Ref) =>
+  r.requestId ? { col: 'service_request_id', val: r.requestId } : r.customerId ? { col: 'customer_id', val: r.customerId } : { col: 'lead_id', val: r.leadId! };
 
 // ---------- phone quick actions ----------
 export function PhoneActions({ phone, size = 'sm' }: { phone: string | null | undefined; size?: 'sm' | 'md' }) {
@@ -41,10 +43,10 @@ const eventTone = (type: string) =>
   : type.includes('cancelled') || type.includes('no_show') ? 'bg-[#fce8e8] text-danger'
   : 'bg-brand-50 text-brand';
 
-export function Timeline({ customerId, leadId, limit = 40 }: Ref & { limit?: number }) {
+export function Timeline({ customerId, leadId, requestId, limit = 40 }: Ref & { limit?: number }) {
   const { t } = useTranslation();
   const lang = useLang();
-  const f = refFilter({ customerId, leadId });
+  const f = refFilter({ customerId, leadId, requestId });
   const q = useQuery({
     queryKey: ['timeline', f.col, f.val],
     queryFn: async () => {
@@ -160,8 +162,10 @@ export interface TaskRow {
   assignee?: { profile: { full_name: string } | null } | null;
   customer?: { id: string; full_name: string; customer_no: string | null } | null;
   lead?: { id: string; full_name: string; lead_no: string | null } | null;
+  service_request_id?: string | null;
+  request?: { id: string; request_no: string } | null;
 }
-export const TASK_SELECT = 'id, kind, title, description, due_at, priority, status, outcome, assigned_to, customer_id, lead_id, assignee:employees!tasks_assigned_to_fkey(profile:profiles(full_name)), customer:customers(id, full_name, customer_no), lead:leads(id, full_name, lead_no)';
+export const TASK_SELECT = 'id, kind, title, description, due_at, priority, status, outcome, assigned_to, customer_id, lead_id, service_request_id, assignee:employees!tasks_assigned_to_fkey(profile:profiles(full_name)), customer:customers(id, full_name, customer_no), lead:leads(id, full_name, lead_no), request:service_requests(id, request_no)';
 
 export function useCompleteTask(onDone?: () => void) {
   const { t } = useTranslation();
@@ -206,6 +210,7 @@ export function FollowUpRow({ task, showRelated, onComplete }: { task: TaskRow; 
           </span>
           {task.assignee?.profile?.full_name && <span>{task.assignee.profile.full_name}</span>}
           {showRelated && related && <span className="text-brand">{related.full_name}</span>}
+          {showRelated && task.request && <Link to="/requests/$id" params={{ id: task.request.id }} className="ltr font-latin font-semibold text-brand">{task.request.request_no}</Link>}
           {task.outcome && <span className="text-ink-2">— {task.outcome}</span>}
         </div>
       </div>

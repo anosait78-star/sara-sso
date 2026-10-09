@@ -68,7 +68,9 @@ function ShellLayout() {
   }, [pathname]);
 
   const flat = groups.flatMap((g) => g.items);
-  const bottomItems = flat.slice(0, 4);
+  // PROJECT_PLAN §17: Home · Requests · Tasks · Customers · More (falls back to the next visible items)
+  const preferred = ['dashboard', 'requests', 'tasks', 'customers'];
+  const bottomItems = [...preferred.map((k) => flat.find((i) => i.key === k)).filter((i): i is NavItem => !!i), ...flat.filter((i) => !preferred.includes(i.key))].slice(0, 4);
 
   return (
     <div className="flex h-full">

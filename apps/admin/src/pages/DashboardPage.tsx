@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { Layers, Sparkles } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { MyWork } from '@/components/dashboard/MyWork';
 import { Badge, Card, CardHeader } from '@/components/ui';
 import { NAV } from '@/layout/nav';
 import { useAuth } from '@/lib/auth';
@@ -35,6 +36,8 @@ export function DashboardPage() {
           {staff?.department_name_ar ? ` · ${staff.department_name_ar}` : ''}
         </p>
       </div>
+
+      <MyWork />
 
       <Card className="overflow-hidden">
         <div className="flex flex-col gap-4 bg-navy p-5 text-white md:flex-row md:items-center">

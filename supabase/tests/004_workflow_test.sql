@@ -18,6 +18,8 @@ select set_config('test.v2_fields', (select count(*) from public.required_fields
                                      where s.workflow_id = current_setting('test.v2')::uuid)::text, true);
 select set_config('test.v2_docs', (select count(*) from public.required_documents d join public.workflow_steps s on s.id = d.workflow_step_id
                                    where s.workflow_id = current_setting('test.v2')::uuid)::text, true);
+select set_config('test.v2_running', (select count(*) from public.service_requests where workflow_id = current_setting('test.v2')::uuid
+                                      and status not in ('completed', 'cancelled'))::text, true);
 select set_config('test.v2_delivery', (select id::text from public.workflow_steps
                                        where workflow_id = current_setting('test.v2')::uuid and step_key = 'delivery'), true);
 
@@ -123,8 +125,8 @@ select throws_ok($$ select public.publish_workflow(current_setting('test.v3')::u
 update public.workflow_steps set requires_approval = false where id = current_setting('test.si')::uuid;
 
 -- 4) publish v3
-select is((public.publish_workflow(current_setting('test.v3')::uuid, 'إضافة خطوة التأمينات الاجتماعية') ->> 'running_on_previous')::int, 0,
-          'publish reports running requests on v2 (0 until Phase 4)');
+select is((public.publish_workflow(current_setting('test.v3')::uuid, 'إضافة خطوة التأمينات الاجتماعية') ->> 'running_on_previous')::int,
+          current_setting('test.v2_running')::int, 'publish reports the running requests that stay on v2');
 select is((select status from public.service_workflows where id = current_setting('test.v3')::uuid), 'published'::public.workflow_status, 'v3 is published');
 select is((select status from public.service_workflows where id = current_setting('test.v2')::uuid), 'archived'::public.workflow_status, 'v2 is archived');
 select is((select count(*) from public.workflow_steps where workflow_id = current_setting('test.v2')::uuid)::int, 7, 'v2 keeps its 7 steps');

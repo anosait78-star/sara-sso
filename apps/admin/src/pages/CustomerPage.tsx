@@ -12,8 +12,9 @@ import { displayPhone, fmtDate, labelOf, useLang, useLookups } from '@/lib/crm';
 import { supabase } from '@/lib/supabase';
 import { cn, errorKey } from '@/lib/utils';
 import { CUSTOMER_SELECT, CustomerFormDrawer, type CustomerRow } from './CustomersPage';
+import { CustomerRequests } from '@/components/requests/CustomerRequests';
 
-type Tab = 'overview' | 'followups' | 'appointments' | 'notes' | 'timeline';
+type Tab = 'overview' | 'requests' | 'followups' | 'appointments' | 'notes' | 'timeline';
 
 export function CustomerPage() {
   const { id } = useParams({ strict: false }) as { id: string };
@@ -65,8 +66,8 @@ export function CustomerPage() {
   const title = c.customer_type === 'company' && c.company_name ? c.company_name : c.full_name;
   const statusTone = { active: 'green', inactive: 'gray', self_registered: 'sky', pending_link: 'amber' } as const;
 
-  const tabs: Tab[] = ['overview', 'followups', 'appointments', 'notes', 'timeline'];
-  const tabLabel = (k: Tab) => ({ overview: t('customers.overview'), followups: t('followups.title'), appointments: t('appointments.title'), notes: t('crm.notes'), timeline: t('crm.timeline') })[k];
+  const tabs: Tab[] = ['overview', ...(can('service_requests', 'view') ? (['requests'] as Tab[]) : []), 'followups', 'appointments', 'notes', 'timeline'];
+  const tabLabel = (k: Tab) => ({ overview: t('customers.overview'), requests: t('requests.title'), followups: t('followups.title'), appointments: t('appointments.title'), notes: t('crm.notes'), timeline: t('crm.timeline') })[k];
 
   return (
     <div className="mx-auto max-w-7xl space-y-4">
@@ -148,6 +149,7 @@ export function CustomerPage() {
               <div className="flex items-center gap-2 rounded-xl bg-canvas px-4 py-3 text-xs text-ink-2"><Info className="size-4 shrink-0" />{t('customers.comingPhases')}</div>
             </>
           )}
+          {tab === 'requests' && <CustomerRequests customerId={c.id} title={title} />}
           {tab === 'followups' && <FollowUpsPanel customerId={c.id} defaultAssignee={c.owner_employee_id} />}
           {tab === 'appointments' && <AppointmentsPanel customerId={c.id} />}
           {tab === 'notes' && <NotesPanel customerId={c.id} />}

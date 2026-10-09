@@ -20,6 +20,7 @@ export type Database = {
           lead_id: string | null
           occurred_at: string
           payload: Json
+          service_request_id: string | null
           summary_ar: string
           summary_en: string | null
           visible_to_client: boolean
@@ -33,6 +34,7 @@ export type Database = {
           lead_id?: string | null
           occurred_at?: string
           payload?: Json
+          service_request_id?: string | null
           summary_ar: string
           summary_en?: string | null
           visible_to_client?: boolean
@@ -46,6 +48,7 @@ export type Database = {
           lead_id?: string | null
           occurred_at?: string
           payload?: Json
+          service_request_id?: string | null
           summary_ar?: string
           summary_en?: string | null
           visible_to_client?: boolean
@@ -63,6 +66,13 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_events_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
             referencedColumns: ["id"]
           },
         ]
@@ -453,6 +463,118 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      documents: {
+        Row: {
+          created_at: string
+          customer_id: string
+          document_type_id: string
+          expires_at: string | null
+          id: string
+          instructions_ar: string | null
+          is_required: boolean
+          max_files: number
+          name_ar: string
+          name_en: string | null
+          received_physically: boolean
+          rejection_note: string | null
+          rejection_reason_id: string | null
+          request_id: string | null
+          request_step_id: string | null
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["document_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          document_type_id: string
+          expires_at?: string | null
+          id?: string
+          instructions_ar?: string | null
+          is_required?: boolean
+          max_files?: number
+          name_ar: string
+          name_en?: string | null
+          received_physically?: boolean
+          rejection_note?: string | null
+          rejection_reason_id?: string | null
+          request_id?: string | null
+          request_step_id?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["document_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          document_type_id?: string
+          expires_at?: string | null
+          id?: string
+          instructions_ar?: string | null
+          is_required?: boolean
+          max_files?: number
+          name_ar?: string
+          name_en?: string | null
+          received_physically?: boolean
+          rejection_note?: string | null
+          rejection_reason_id?: string | null
+          request_id?: string | null
+          request_step_id?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["document_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_document_type_id_fkey"
+            columns: ["document_type_id"]
+            isOneToOne: false
+            referencedRelation: "document_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_rejection_reason_id_fkey"
+            columns: ["rejection_reason_id"]
+            isOneToOne: false
+            referencedRelation: "rejection_reasons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_request_step_id_fkey"
+            columns: ["request_step_id"]
+            isOneToOne: false
+            referencedRelation: "service_request_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       employees: {
         Row: {
@@ -877,6 +999,81 @@ export type Database = {
         }
         Relationships: []
       }
+      rejection_reasons: {
+        Row: {
+          id: string
+          is_active: boolean
+          sort_order: number
+          text_ar: string
+          text_en: string | null
+        }
+        Insert: {
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          text_ar: string
+          text_en?: string | null
+        }
+        Update: {
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          text_ar?: string
+          text_en?: string | null
+        }
+        Relationships: []
+      }
+      request_field_values: {
+        Row: {
+          created_at: string
+          field_key: string
+          field_type: Database["public"]["Enums"]["field_type"]
+          filled_by_user_id: string | null
+          id: string
+          request_id: string
+          request_step_id: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          field_key: string
+          field_type: Database["public"]["Enums"]["field_type"]
+          filled_by_user_id?: string | null
+          id?: string
+          request_id: string
+          request_step_id: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          created_at?: string
+          field_key?: string
+          field_type?: Database["public"]["Enums"]["field_type"]
+          filled_by_user_id?: string | null
+          id?: string
+          request_id?: string
+          request_step_id?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "request_field_values_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "request_field_values_request_step_id_fkey"
+            columns: ["request_step_id"]
+            isOneToOne: false
+            referencedRelation: "service_request_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       required_documents: {
         Row: {
           created_at: string
@@ -1098,6 +1295,352 @@ export type Database = {
         }
         Relationships: []
       }
+      service_request_steps: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          approver_role_id: string | null
+          assigned_department_id: string | null
+          assigned_employee_id: string | null
+          assignee_department_id: string | null
+          assignee_employee_id: string | null
+          assignee_role_id: string | null
+          assignee_type: Database["public"]["Enums"]["assignee_type"]
+          auto_create_task: boolean
+          client_action_required: boolean
+          client_instructions: string | null
+          completed_at: string | null
+          completed_by: string | null
+          completion_status_label_ar: string | null
+          completion_status_label_en: string | null
+          created_at: string
+          description: string | null
+          due_at: string | null
+          duration_unit: Database["public"]["Enums"]["duration_unit"]
+          duration_value: number
+          fields_snapshot: Json
+          id: string
+          is_adhoc: boolean
+          is_client_visible: boolean
+          is_required: boolean
+          name_ar: string
+          name_en: string | null
+          note: string | null
+          request_id: string
+          requires_approval: boolean
+          return_reason: string | null
+          sets_request_status:
+            | Database["public"]["Enums"]["request_status"]
+            | null
+          skip_reason: string | null
+          sort_order: number
+          source_step_id: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["request_step_status"]
+          step_key: string
+          submitted_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          approver_role_id?: string | null
+          assigned_department_id?: string | null
+          assigned_employee_id?: string | null
+          assignee_department_id?: string | null
+          assignee_employee_id?: string | null
+          assignee_role_id?: string | null
+          assignee_type?: Database["public"]["Enums"]["assignee_type"]
+          auto_create_task?: boolean
+          client_action_required?: boolean
+          client_instructions?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_status_label_ar?: string | null
+          completion_status_label_en?: string | null
+          created_at?: string
+          description?: string | null
+          due_at?: string | null
+          duration_unit?: Database["public"]["Enums"]["duration_unit"]
+          duration_value?: number
+          fields_snapshot?: Json
+          id?: string
+          is_adhoc?: boolean
+          is_client_visible?: boolean
+          is_required?: boolean
+          name_ar: string
+          name_en?: string | null
+          note?: string | null
+          request_id: string
+          requires_approval?: boolean
+          return_reason?: string | null
+          sets_request_status?:
+            | Database["public"]["Enums"]["request_status"]
+            | null
+          skip_reason?: string | null
+          sort_order: number
+          source_step_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["request_step_status"]
+          step_key: string
+          submitted_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          approver_role_id?: string | null
+          assigned_department_id?: string | null
+          assigned_employee_id?: string | null
+          assignee_department_id?: string | null
+          assignee_employee_id?: string | null
+          assignee_role_id?: string | null
+          assignee_type?: Database["public"]["Enums"]["assignee_type"]
+          auto_create_task?: boolean
+          client_action_required?: boolean
+          client_instructions?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_status_label_ar?: string | null
+          completion_status_label_en?: string | null
+          created_at?: string
+          description?: string | null
+          due_at?: string | null
+          duration_unit?: Database["public"]["Enums"]["duration_unit"]
+          duration_value?: number
+          fields_snapshot?: Json
+          id?: string
+          is_adhoc?: boolean
+          is_client_visible?: boolean
+          is_required?: boolean
+          name_ar?: string
+          name_en?: string | null
+          note?: string | null
+          request_id?: string
+          requires_approval?: boolean
+          return_reason?: string | null
+          sets_request_status?:
+            | Database["public"]["Enums"]["request_status"]
+            | null
+          skip_reason?: string | null
+          sort_order?: number
+          source_step_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["request_step_status"]
+          step_key?: string
+          submitted_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_request_steps_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_steps_approver_role_id_fkey"
+            columns: ["approver_role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_steps_assigned_department_id_fkey"
+            columns: ["assigned_department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_steps_assigned_employee_id_fkey"
+            columns: ["assigned_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_steps_assignee_department_id_fkey"
+            columns: ["assignee_department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_steps_assignee_employee_id_fkey"
+            columns: ["assignee_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_steps_assignee_role_id_fkey"
+            columns: ["assignee_role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_steps_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_steps_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_steps_source_step_id_fkey"
+            columns: ["source_step_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_request_steps_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_requests: {
+        Row: {
+          cancelled_at: string | null
+          cancelled_reason: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          current_step_id: string | null
+          customer_id: string
+          deleted_at: string | null
+          department_id: string | null
+          due_at: string | null
+          expected_completion_at: string | null
+          hold_reason: string | null
+          id: string
+          is_overdue: boolean
+          notes: string | null
+          owner_employee_id: string | null
+          paid_amount: number
+          priority: Database["public"]["Enums"]["task_priority"]
+          request_no: string | null
+          service_id: string
+          source: string
+          status: Database["public"]["Enums"]["request_status"]
+          submitted_at: string | null
+          total_amount: number | null
+          updated_at: string
+          workflow_id: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          cancelled_reason?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          current_step_id?: string | null
+          customer_id: string
+          deleted_at?: string | null
+          department_id?: string | null
+          due_at?: string | null
+          expected_completion_at?: string | null
+          hold_reason?: string | null
+          id?: string
+          is_overdue?: boolean
+          notes?: string | null
+          owner_employee_id?: string | null
+          paid_amount?: number
+          priority?: Database["public"]["Enums"]["task_priority"]
+          request_no?: string | null
+          service_id: string
+          source?: string
+          status?: Database["public"]["Enums"]["request_status"]
+          submitted_at?: string | null
+          total_amount?: number | null
+          updated_at?: string
+          workflow_id: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          cancelled_reason?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          current_step_id?: string | null
+          customer_id?: string
+          deleted_at?: string | null
+          department_id?: string | null
+          due_at?: string | null
+          expected_completion_at?: string | null
+          hold_reason?: string | null
+          id?: string
+          is_overdue?: boolean
+          notes?: string | null
+          owner_employee_id?: string | null
+          paid_amount?: number
+          priority?: Database["public"]["Enums"]["task_priority"]
+          request_no?: string | null
+          service_id?: string
+          source?: string
+          status?: Database["public"]["Enums"]["request_status"]
+          submitted_at?: string | null
+          total_amount?: number | null
+          updated_at?: string
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_requests_current_step_fkey"
+            columns: ["current_step_id"]
+            isOneToOne: false
+            referencedRelation: "service_request_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_owner_employee_id_fkey"
+            columns: ["owner_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "service_workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_workflows: {
         Row: {
           archived_at: string | null
@@ -1258,6 +1801,8 @@ export type Database = {
           lead_id: string | null
           outcome: string | null
           priority: Database["public"]["Enums"]["task_priority"]
+          request_step_id: string | null
+          service_request_id: string | null
           status: Database["public"]["Enums"]["task_status"]
           title: string
           updated_at: string
@@ -1277,6 +1822,8 @@ export type Database = {
           lead_id?: string | null
           outcome?: string | null
           priority?: Database["public"]["Enums"]["task_priority"]
+          request_step_id?: string | null
+          service_request_id?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           title: string
           updated_at?: string
@@ -1296,6 +1843,8 @@ export type Database = {
           lead_id?: string | null
           outcome?: string | null
           priority?: Database["public"]["Enums"]["task_priority"]
+          request_step_id?: string | null
+          service_request_id?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           title?: string
           updated_at?: string
@@ -1334,6 +1883,20 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_request_step_id_fkey"
+            columns: ["request_step_id"]
+            isOneToOne: false
+            referencedRelation: "service_request_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
             referencedColumns: ["id"]
           },
         ]
@@ -1472,6 +2035,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_request_step: {
+        Args: { p_note?: string; p_request_step_id: string }
+        Returns: undefined
+      }
+      cancel_service_request: {
+        Args: { p_reason: string; p_request_id: string }
+        Returns: undefined
+      }
       change_lead_stage: {
         Args: {
           p_follow_up_at?: string
@@ -1487,12 +2058,26 @@ export type Database = {
         Args: { p_change_note?: string; p_workflow_id: string }
         Returns: string
       }
+      complete_request_step: {
+        Args: { p_note?: string; p_request_step_id: string }
+        Returns: undefined
+      }
       convert_lead_to_customer: {
         Args: {
           p_customer_type?: Database["public"]["Enums"]["customer_type"]
           p_lead_id: string
           p_merge_into?: string
           p_national_id?: string
+        }
+        Returns: string
+      }
+      create_service_request: {
+        Args: {
+          p_customer_id: string
+          p_notes?: string
+          p_owner_employee_id?: string
+          p_priority?: Database["public"]["Enums"]["task_priority"]
+          p_service_id: string
         }
         Returns: string
       }
@@ -1533,6 +2118,10 @@ export type Database = {
           title: string
         }[]
       }
+      insert_adhoc_step: {
+        Args: { p_after_step_id: string; p_config: Json; p_request_id: string }
+        Returns: string
+      }
       insert_workflow_step: {
         Args: {
           p_name_ar: string
@@ -1555,12 +2144,50 @@ export type Database = {
         Args: { p_change_note?: string; p_workflow_id: string }
         Returns: Json
       }
+      reassign_request_step: {
+        Args: { p_employee_id: string; p_request_step_id: string }
+        Returns: undefined
+      }
+      receive_document: {
+        Args: { p_document_id: string; p_expires_at?: string; p_note?: string }
+        Returns: undefined
+      }
+      refresh_overdue_requests: { Args: never; Returns: number }
+      reject_document: {
+        Args: { p_document_id: string; p_note?: string; p_reason_id: string }
+        Returns: undefined
+      }
       reorder_workflow_steps: {
         Args: { p_step_ids: string[]; p_workflow_id: string }
         Returns: undefined
       }
+      request_step_missing: {
+        Args: { p_step_id: string }
+        Returns: {
+          item_key: string
+          kind: string
+          name_ar: string
+          name_en: string
+        }[]
+      }
+      return_request_step: {
+        Args: { p_reason: string; p_request_step_id: string }
+        Returns: undefined
+      }
+      set_request_hold: {
+        Args: { p_hold: boolean; p_reason?: string; p_request_id: string }
+        Returns: undefined
+      }
       set_role_permissions: {
         Args: { p_grants: Json; p_role_id: string }
+        Returns: undefined
+      }
+      skip_request_step: {
+        Args: { p_reason: string; p_request_step_id: string }
+        Returns: undefined
+      }
+      submit_step_data: {
+        Args: { p_request_step_id: string; p_values: Json }
         Returns: undefined
       }
       validate_workflow: {
@@ -1607,6 +2234,12 @@ export type Database = {
         | "active"
         | "inactive"
       customer_type: "individual" | "company"
+      document_status:
+        | "pending"
+        | "uploaded"
+        | "under_review"
+        | "approved"
+        | "rejected"
       duration_unit: "hours" | "days" | "business_days"
       employee_status: "invited" | "active" | "suspended"
       field_filler: "client" | "staff"
@@ -1640,6 +2273,14 @@ export type Database = {
         | "on_hold"
         | "completed"
         | "cancelled"
+      request_step_status:
+        | "pending"
+        | "active"
+        | "waiting_client"
+        | "waiting_approval"
+        | "completed"
+        | "skipped"
+        | "returned"
       service_module:
         | "generic"
         | "real_estate"
@@ -1802,6 +2443,13 @@ export const Constants = {
         "inactive",
       ],
       customer_type: ["individual", "company"],
+      document_status: [
+        "pending",
+        "uploaded",
+        "under_review",
+        "approved",
+        "rejected",
+      ],
       duration_unit: ["hours", "days", "business_days"],
       employee_status: ["invited", "active", "suspended"],
       field_filler: ["client", "staff"],
@@ -1837,6 +2485,15 @@ export const Constants = {
         "on_hold",
         "completed",
         "cancelled",
+      ],
+      request_step_status: [
+        "pending",
+        "active",
+        "waiting_client",
+        "waiting_approval",
+        "completed",
+        "skipped",
+        "returned",
       ],
       service_module: [
         "generic",

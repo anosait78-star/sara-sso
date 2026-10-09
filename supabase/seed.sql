@@ -338,3 +338,69 @@ begin
   perform set_config('request.jwt.claims', '', true);
 end;
 $$;
+
+-- ---------------------------------------------------------------------
+-- Sample service requests (Phase 4), run through the same RPCs as the admin UI.
+--   REQ-000001  CF-LLC   أحمد        — steps 1–2 done (2 approved), now at "حجز الاسم"
+--   REQ-000002  INS-CAR  هالة        — waiting for the client, overdue
+--   REQ-000003  LN-WC    شركة النيل  — a document was rejected -> waiting for the client
+--   REQ-000004  CF-TAX   أحمد        — completed
+-- ---------------------------------------------------------------------
+do $$
+declare
+  c_ahmed uuid := (select id from public.customers where phone = '+201002345678');
+  c_nile uuid := (select id from public.customers where phone = '+201228764410');
+  c_hala uuid := (select id from public.customers where phone = '+201115550192');
+  e_mohamed uuid := (select id from public.employees where profile_id = '33333333-3333-4333-8333-333333333333');
+  e_mona uuid := (select id from public.employees where profile_id = '22222222-2222-4222-8222-222222222222');
+  e_nourhan uuid := (select id from public.employees where profile_id = '44444444-4444-4444-8444-444444444444');
+  r uuid;
+  s uuid;
+  d record;
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', '11111111-1111-4111-8111-111111111111', 'role', 'authenticated')::text, true);
+
+  -- 1) LLC formation
+  r := public.create_service_request((select id from public.services where code = 'CF-LLC'), c_ahmed, e_mohamed, 'high', 'العميل يفضل التواصل بعد 4 مساءً');
+  s := (select current_step_id from public.service_requests where id = r);
+  perform public.submit_step_data(s, '{"proposed_names": "النيل للتجارة\nالأهرام للتوريدات\nالدلتا الحديثة", "activity": "trade", "capital": 50000, "partners_count": 3}');
+  for d in select id from public.documents where request_step_id = s and is_required loop
+    perform public.receive_document(d.id, 'تم استلام الأصل في المكتب');
+  end loop;
+  perform public.complete_request_step(s, 'البيانات مكتملة');
+  s := (select current_step_id from public.service_requests where id = r);
+  perform public.complete_request_step(s, 'المستندات سليمة');
+  perform public.approve_request_step(s, 'معتمد');
+
+  -- 2) car insurance — waiting for the client, overdue
+  r := public.create_service_request((select id from public.services where code = 'INS-CAR'), c_hala, e_nourhan, 'normal', null);
+  update public.service_requests set due_at = now() - interval '2 days' where id = r;
+  update public.service_request_steps set due_at = now() - interval '3 days', started_at = now() - interval '6 days'
+   where id = (select current_step_id from public.service_requests where id = r);
+
+  -- 3) working capital loan — bank statement rejected
+  r := public.create_service_request((select id from public.services where code = 'LN-WC'), c_nile, e_mona, 'urgent', 'جهة التمويل المقترحة: بنك مصر');
+  s := (select current_step_id from public.service_requests where id = r);
+  perform public.submit_step_data(s, '{"requested_amount": 1500000, "annual_revenue": 6000000, "years_in_business": 7}');
+  perform public.receive_document((select id from public.documents where request_step_id = s and name_ar = 'مستخرج السجل التجاري'), null);
+  perform public.receive_document((select id from public.documents where request_step_id = s and name_ar = 'البطاقة الضريبية'), null);
+  perform public.reject_document((select id from public.documents where request_step_id = s and name_ar like 'كشف حساب%'),
+                                 (select id from public.rejection_reasons where sort_order = 4), 'الكشف آخر 3 شهور فقط والمطلوب 6');
+
+  -- 4) tax card — completed end to end
+  r := public.create_service_request((select id from public.services where code = 'CF-TAX'), c_ahmed, e_mohamed, 'normal', null);
+  for i in 1..4 loop
+    s := (select current_step_id from public.service_requests where id = r);
+    for d in select id from public.documents where request_step_id = s and is_required loop
+      perform public.receive_document(d.id, null);
+    end loop;
+    perform public.complete_request_step(s, null);
+    if (select status from public.service_request_steps where id = s) = 'waiting_approval' then
+      perform public.approve_request_step(s, null);
+    end if;
+  end loop;
+
+  perform app.refresh_overdue();
+  perform set_config('request.jwt.claims', '', true);
+end;
+$$;
