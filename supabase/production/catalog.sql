@@ -1,0 +1,250 @@
+-- =====================================================================
+-- PRODUCTION starter service catalog — run ONCE on a new Supabase project, after the first super admin exists.
+-- Same services, steps, fields (incl. maps_to), documents and prices as the local seed, without demo customers,
+-- requests or test accounts. Built through the Workflow Builder RPCs as the first super admin, so versions and
+-- the audit log behave exactly like services created from the admin.
+-- Generated from supabase/seed.sql (section "Sample service catalog") — keep both in sync.
+-- Run it in the Supabase dashboard -> SQL Editor. Edit or unpublish services later from the admin.
+-- =====================================================================
+do $$
+declare
+  svc jsonb;
+  st jsonb;
+  fld jsonb;
+  doc jsonb;
+  v_service uuid;
+  v_wf uuid;
+  v_step uuid;
+  v_llc uuid;
+  i int;
+  j int;
+  v_admin uuid;
+begin
+  if exists (select 1 from public.services) then
+    raise exception 'the service catalog is not empty — this starter script runs once on a new project';
+  end if;
+  select e.profile_id into v_admin from public.employees e join public.roles r on r.id = e.role_id
+   where r.key = 'super_admin' and e.status = 'active' order by e.created_at limit 1;
+  if v_admin is null then
+    raise exception 'create the first super admin first (DEPLOYMENT.md)';
+  end if;
+  perform set_config('request.jwt.claims', json_build_object('sub', v_admin, 'role', 'authenticated')::text, true);
+
+  for svc in select * from jsonb_array_elements($json$[
+    {"code": "CF-LLC", "cat": "company_formation", "module": "company_formation", "icon": "landmark", "price": 15000, "visible": true,
+     "ar": "تأسيس شركة ذات مسؤولية محدودة", "en": "LLC company formation",
+     "desc": "تأسيس شركة ذات مسؤولية محدودة بالكامل: حجز الاسم، عقد التأسيس، السجل التجاري، البطاقة الضريبية حتى تسليم الأوراق.",
+     "note": "الإصدار الأول",
+     "steps": [
+       {"k": "collect_data", "ar": "جمع البيانات", "en": "Collect data", "d": 2, "a": "request_owner", "client": true, "label": "تم استلام بياناتك",
+        "instr": "ارفع بطاقات الشركاء وعقد المقر وأكمل بيانات الشركة.", "status": "waiting_client",
+        "fields": [
+          {"maps": "company_files.proposed_names", "k": "proposed_names", "ar": "الأسماء المقترحة للشركة (3)", "en": "Proposed names (3)", "t": "textarea", "by": "client"},
+          {"maps": "company_files.activity", "k": "activity", "ar": "النشاط التجاري", "en": "Business activity", "t": "select", "by": "client",
+           "opts": [["trade", "تجارة عامة", "General trade"], ["contracting", "مقاولات", "Contracting"], ["it", "برمجيات وتكنولوجيا", "IT"], ["import_export", "استيراد وتصدير", "Import & export"]]},
+          {"maps": "company_files.capital", "k": "capital", "ar": "رأس المال", "en": "Capital", "t": "money", "by": "client", "min": 1000},
+          {"k": "partners_count", "ar": "عدد الشركاء", "en": "Number of partners", "t": "number", "by": "client", "min": 2, "max": 50}],
+        "docs": [["partner_ids", true], ["lease_contract", true], ["utility_bill", false]]},
+       {"k": "name_reservation", "ar": "حجز الاسم", "en": "Name reservation", "d": 3, "a": "department:Operations", "label": "تم حجز الاسم التجاري",
+        "fields": [{"maps": "company_files.approved_name", "k": "approved_name", "ar": "الاسم المعتمد", "en": "Approved name", "t": "text", "by": "staff"}],
+        "docs": [["name_reservation", true]]},
+       {"k": "company_incorporation", "ar": "تأسيس الشركة", "en": "Company incorporation", "d": 5, "a": "department:Operations", "label": "تم توقيع عقد التأسيس",
+        "fields": [{"k": "contract_date", "ar": "تاريخ توقيع العقد", "en": "Contract date", "t": "date", "by": "staff"}],
+        "docs": [["articles_of_association", true], ["capital_deposit_certificate", true]]},
+       {"k": "tax_card", "ar": "البطاقة الضريبية", "en": "Tax card", "d": 4, "a": "department:Operations", "label": "تم استخراج البطاقة الضريبية",
+        "fields": [{"maps": "company_files.tax_card_no", "k": "tax_card_no", "ar": "رقم البطاقة الضريبية", "en": "Tax card no.", "t": "text", "by": "staff"}],
+        "docs": [["tax_card", true]]},
+       {"k": "commercial_register", "ar": "السجل التجاري", "en": "Commercial register", "d": 3, "a": "department:Operations", "label": "تم القيد في السجل التجاري",
+        "fields": [{"maps": "company_files.commercial_register_no", "k": "commercial_register_no", "ar": "رقم السجل التجاري", "en": "Commercial register no.", "t": "text", "by": "staff"}],
+        "docs": [["commercial_register", true]]},
+       {"k": "delivery", "ar": "التسليم", "en": "Delivery", "d": 1, "a": "department:Customer Service", "client": true, "label": "تم تسليم أوراق الشركة",
+        "status": "completed", "instr": "سيتم التواصل معك لتحديد موعد استلام الأوراق الأصلية."}]},
+
+    {"code": "CF-TAX", "cat": "company_formation", "module": "generic", "icon": "file-badge", "price": 2500, "visible": true,
+     "ar": "استخراج بطاقة ضريبية", "en": "Tax card issuance",
+     "steps": [
+       {"k": "collect_data", "ar": "جمع البيانات", "en": "Collect data", "d": 1, "a": "request_owner", "client": true, "label": "تم استلام بياناتك",
+        "docs": [["national_id", true], ["commercial_register", true], ["lease_contract", true]]},
+       {"k": "document_review", "ar": "مراجعة المستندات", "en": "Document review", "d": 1, "a": "department:Operations", "appr": "manager", "vis": false},
+       {"k": "tax_office_submission", "ar": "التقديم لمأمورية الضرائب", "en": "Tax office submission", "d": 5, "a": "department:Operations", "label": "تم التقديم للمأمورية", "task": true},
+       {"k": "delivery", "ar": "التسليم", "en": "Delivery", "d": 1, "a": "department:Customer Service", "label": "البطاقة جاهزة للاستلام", "status": "completed",
+        "docs": [["tax_card", true]]}]},
+
+    {"code": "CF-CR", "cat": "company_formation", "module": "generic", "icon": "stamp", "price": 3000, "visible": true,
+     "ar": "قيد / تجديد سجل تجاري", "en": "Commercial register — new / renewal",
+     "steps": [
+       {"k": "collect_data", "ar": "جمع البيانات", "en": "Collect data", "d": 1, "a": "request_owner", "client": true,
+        "fields": [{"k": "request_type", "ar": "نوع الطلب", "en": "Request type", "t": "select", "by": "client", "opts": [["new", "قيد جديد", "New"], ["renewal", "تجديد", "Renewal"]]}],
+        "docs": [["national_id", true], ["lease_contract", true]]},
+       {"k": "chamber_of_commerce", "ar": "الغرفة التجارية", "en": "Chamber of commerce", "d": 2, "a": "department:Operations"},
+       {"k": "commercial_register", "ar": "السجل التجاري", "en": "Commercial register", "d": 3, "a": "department:Operations", "label": "تم القيد في السجل",
+        "docs": [["commercial_register", true]]},
+       {"k": "quality_check", "ar": "مراجعة نهائية", "en": "Final check", "d": 1, "a": "role:manager", "vis": false},
+       {"k": "delivery", "ar": "التسليم", "en": "Delivery", "d": 1, "a": "department:Customer Service", "status": "completed", "label": "تم تسليم المستخرج"}]},
+
+    {"code": "CF-SI", "cat": "company_formation", "module": "generic", "icon": "users", "price": 1800, "visible": false, "active": false,
+     "ar": "تسجيل التأمينات الاجتماعية", "en": "Social insurance registration",
+     "steps": [
+       {"k": "collect_data", "ar": "جمع البيانات", "en": "Collect data", "d": 1, "a": "request_owner",
+        "fields": [{"k": "employees_count", "ar": "عدد العاملين", "en": "Employees", "t": "number", "by": "staff", "min": 1}],
+        "docs": [["commercial_register", true], ["tax_card", true]]},
+       {"k": "social_insurance", "ar": "التأمينات الاجتماعية", "en": "Social insurance", "d": 5, "a": "department:Operations", "docs": [["social_insurance_form_1", true]]},
+       {"k": "delivery", "ar": "التسليم", "en": "Delivery", "d": 1, "a": "department:Customer Service", "status": "completed"}]},
+
+    {"code": "INS-CAR", "cat": "insurance", "module": "insurance", "icon": "car", "price": 500, "visible": true,
+     "ar": "تأمين سيارة شامل", "en": "Comprehensive car insurance",
+     "steps": [
+       {"k": "collect_data", "ar": "بيانات السيارة", "en": "Vehicle data", "d": 1, "a": "request_owner", "client": true, "label": "تم استلام بيانات السيارة",
+        "fields": [
+          {"maps": "insurance_policies.subject", "k": "car_model", "ar": "الماركة والموديل", "en": "Make & model", "t": "text", "by": "client"},
+          {"k": "car_year", "ar": "سنة الصنع", "en": "Year", "t": "number", "by": "client", "min": 1990, "max": 2027},
+          {"k": "car_value", "ar": "القيمة التقديرية", "en": "Estimated value", "t": "money", "by": "client"}],
+        "docs": [["car_license", true], ["driving_license", true], ["national_id", true]]},
+       {"k": "inspection", "ar": "معاينة السيارة", "en": "Vehicle inspection", "d": 2, "a": "department:Operations", "docs": [["car_photos", true]]},
+       {"k": "quotes", "ar": "عروض شركات التأمين", "en": "Insurer quotes", "d": 2, "a": "role:sales", "label": "عروض الأسعار جاهزة", "client": true,
+        "fields": [{"maps": "insurance_policies.insurance_company", "k": "chosen_company", "ar": "الشركة المختارة", "en": "Chosen insurer", "t": "text", "by": "client"}]},
+       {"k": "policy_issuance", "ar": "إصدار الوثيقة", "en": "Policy issuance", "d": 3, "a": "department:Operations", "label": "تم إصدار الوثيقة",
+        "fields": [{"maps": "insurance_policies.policy_no", "k": "policy_no", "ar": "رقم الوثيقة", "en": "Policy no.", "t": "text", "by": "staff"},
+                   {"maps": "insurance_policies.start_date", "k": "start_date", "ar": "تاريخ البداية", "en": "Start date", "t": "date", "by": "staff"},
+                   {"maps": "insurance_policies.end_date", "k": "end_date", "ar": "تاريخ الانتهاء", "en": "End date", "t": "date", "by": "staff"},
+                   {"maps": "insurance_policies.premium", "k": "premium", "ar": "القسط السنوي", "en": "Annual premium", "t": "money", "by": "staff", "req": false}]},
+       {"k": "delivery", "ar": "التسليم", "en": "Delivery", "d": 1, "a": "department:Customer Service", "status": "completed"}]},
+
+    {"code": "INS-MED", "cat": "insurance", "module": "insurance", "icon": "heart-pulse", "price": 400, "visible": true,
+     "ar": "تأمين طبي (أفراد / عائلي)", "en": "Medical insurance (individual / family)",
+     "steps": [
+       {"k": "collect_data", "ar": "بيانات المؤمَّن عليهم", "en": "Insured persons", "d": 1, "a": "request_owner", "client": true,
+        "fields": [{"k": "members", "ar": "عدد الأفراد", "en": "Members", "t": "number", "by": "client", "min": 1, "max": 10},
+                   {"k": "plan", "ar": "نوع التغطية", "en": "Plan", "t": "select", "by": "client", "opts": [["basic", "أساسية", "Basic"], ["plus", "متوسطة", "Plus"], ["premium", "شاملة", "Premium"]]}],
+        "docs": [["national_id", true], ["medical_report", false]]},
+       {"k": "quotes", "ar": "عروض شركات التأمين", "en": "Insurer quotes", "d": 3, "a": "role:sales", "client": true, "label": "عروض الأسعار جاهزة"},
+       {"k": "policy_issuance", "ar": "إصدار الوثيقة", "en": "Policy issuance", "d": 5, "a": "department:Operations", "label": "تم إصدار الوثيقة",
+        "fields": [{"maps": "insurance_policies.policy_no", "k": "policy_no", "ar": "رقم الوثيقة", "en": "Policy no.", "t": "text", "by": "staff"},
+                   {"maps": "insurance_policies.start_date", "k": "start_date", "ar": "تاريخ البداية", "en": "Start date", "t": "date", "by": "staff"},
+                   {"maps": "insurance_policies.end_date", "k": "end_date", "ar": "تاريخ الانتهاء", "en": "End date", "t": "date", "by": "staff"}]},
+       {"k": "delivery", "ar": "التسليم", "en": "Delivery", "d": 1, "a": "department:Customer Service", "status": "completed"}]},
+
+    {"code": "INS-RENEW", "cat": "insurance", "module": "insurance", "icon": "refresh-cw", "price": 150, "visible": false,
+     "ar": "تجديد وثيقة تأمين", "en": "Policy renewal",
+     "steps": [
+       {"k": "renewal_contact", "ar": "التواصل مع العميل", "en": "Contact client", "d": 2, "a": "role:sales", "task": true},
+       {"k": "policy_issuance", "ar": "إصدار الوثيقة الجديدة", "en": "New policy issuance", "d": 3, "a": "department:Operations", "docs": [["previous_policy", true]]},
+       {"k": "delivery", "ar": "التسليم", "en": "Delivery", "d": 1, "a": "department:Customer Service", "status": "completed"}]},
+
+    {"code": "RE-BUY", "cat": "real_estate", "module": "real_estate", "icon": "home", "price": null, "visible": true,
+     "ar": "شراء عقار (وساطة)", "en": "Property purchase (brokerage)",
+     "steps": [
+       {"k": "requirements", "ar": "تحديد المتطلبات", "en": "Requirements", "d": 1, "a": "role:sales", "client": true,
+        "fields": [{"k": "property_type", "ar": "نوع العقار", "en": "Property type", "t": "select", "by": "client", "opts": [["apartment", "شقة", "Apartment"], ["villa", "فيلا", "Villa"], ["shop", "محل", "Shop"], ["office", "مكتب", "Office"]]},
+                   {"k": "budget", "ar": "الميزانية", "en": "Budget", "t": "money", "by": "client"},
+                   {"k": "area", "ar": "المنطقة المفضلة", "en": "Preferred area", "t": "text", "by": "client"}]},
+       {"k": "shortlist", "ar": "ترشيح العقارات", "en": "Shortlist", "d": 3, "a": "role:sales", "label": "تم ترشيح عقارات مناسبة"},
+       {"k": "visits", "ar": "المعاينات", "en": "Visits", "d": 5, "a": "role:sales", "client": true, "label": "تمت المعاينة"},
+       {"k": "negotiation", "ar": "التفاوض", "en": "Negotiation", "d": 5, "a": "role:sales", "req": false},
+       {"k": "contract_review", "ar": "مراجعة العقد", "en": "Contract review", "d": 2, "a": "department:Operations", "appr": "manager",
+        "docs": [["ownership_contract", true], ["national_id", true]]},
+       {"k": "handover", "ar": "التعاقد والتسليم", "en": "Contract & handover", "d": 2, "a": "role:sales", "status": "completed", "label": "تم التعاقد"}]},
+
+    {"code": "RE-RENT", "cat": "real_estate", "module": "real_estate", "icon": "key-round", "price": null, "visible": true,
+     "ar": "إيجار عقار", "en": "Property rental",
+     "steps": [
+       {"k": "requirements", "ar": "تحديد المتطلبات", "en": "Requirements", "d": 1, "a": "role:sales", "client": true,
+        "fields": [{"k": "budget", "ar": "الإيجار الشهري المتوقع", "en": "Monthly budget", "t": "money", "by": "client"}]},
+       {"k": "shortlist", "ar": "ترشيح العقارات", "en": "Shortlist", "d": 2, "a": "role:sales"},
+       {"k": "visits", "ar": "المعاينات", "en": "Visits", "d": 3, "a": "role:sales", "client": true},
+       {"k": "lease_contract", "ar": "عقد الإيجار", "en": "Lease contract", "d": 2, "a": "department:Operations", "docs": [["lease_contract", true], ["national_id", true]]},
+       {"k": "handover", "ar": "التسليم", "en": "Handover", "d": 1, "a": "role:sales", "status": "completed"}]},
+
+    {"code": "LN-WC", "cat": "loans", "module": "loans", "icon": "banknote", "price": 5000, "visible": true,
+     "ar": "قرض رأس مال عامل", "en": "Working capital loan",
+     "steps": [
+       {"k": "collect_data", "ar": "بيانات النشاط", "en": "Business data", "d": 2, "a": "request_owner", "client": true,
+        "fields": [{"maps": "loan_applications.requested_amount", "k": "requested_amount", "ar": "المبلغ المطلوب", "en": "Requested amount", "t": "money", "by": "client", "min": 50000},
+                   {"maps": "loan_applications.annual_revenue", "k": "annual_revenue", "ar": "الإيراد السنوي", "en": "Annual revenue", "t": "money", "by": "client"},
+                   {"maps": "loan_applications.years_in_business", "k": "years_in_business", "ar": "سنوات العمل", "en": "Years in business", "t": "number", "by": "client", "min": 0},
+                   {"maps": "loan_applications.tenor_months", "k": "tenor_months", "ar": "مدة التمويل (شهور)", "en": "Tenor (months)", "t": "number", "by": "client", "min": 6, "max": 120, "req": false},
+                   {"maps": "loan_applications.purpose", "k": "purpose", "ar": "الغرض من التمويل", "en": "Purpose", "t": "textarea", "by": "client", "req": false}],
+        "docs": [["commercial_register", true], ["tax_card", true], ["bank_statement", true]]},
+       {"k": "financial_analysis", "ar": "التحليل المالي", "en": "Financial analysis", "d": 3, "a": "department:Finance", "vis": false},
+       {"k": "file_preparation", "ar": "تجهيز ملف التمويل", "en": "File preparation", "d": 3, "a": "department:Operations", "appr": "manager",
+        "docs": [["financial_statements", true], ["feasibility_study", false]]},
+       {"k": "submission", "ar": "التقديم لجهات التمويل", "en": "Submission to lenders", "d": 2, "a": "department:Operations", "label": "تم تقديم الملف لجهة التمويل"},
+       {"k": "follow_up", "ar": "متابعة قرار الجهة", "en": "Lender decision follow-up", "d": 14, "u": "days", "a": "request_owner", "task": true},
+       {"k": "decision", "ar": "إبلاغ العميل بالقرار", "en": "Inform client", "d": 1, "a": "request_owner", "label": "صدر قرار جهة التمويل"},
+       {"k": "closing", "ar": "إغلاق الملف", "en": "Closing", "d": 1, "a": "department:Customer Service", "status": "completed"}]},
+
+    {"code": "LN-EQ", "cat": "loans", "module": "loans", "icon": "factory", "price": 7000, "visible": false, "publish": false,
+     "ar": "تمويل معدات وآلات", "en": "Equipment financing",
+     "steps": [
+       {"k": "collect_data", "ar": "بيانات النشاط والمعدات", "en": "Business & equipment data", "d": 2, "a": "request_owner",
+        "docs": [["equipment_quotation", true], ["commercial_register", true]]},
+       {"k": "file_preparation", "ar": "تجهيز ملف التمويل", "en": "File preparation", "d": 3, "a": "department:Operations"},
+       {"k": "submission", "ar": "التقديم لجهات التمويل", "en": "Submission", "d": 2, "a": "department:Operations"}]}
+  ]$json$::jsonb) loop
+
+    insert into public.services (category_id, code, name_ar, name_en, description_ar, icon, module_key, default_price, is_client_visible, sort_order)
+    values ((select id from public.service_categories where key = svc ->> 'cat'), svc ->> 'code', svc ->> 'ar', svc ->> 'en', svc ->> 'desc',
+            svc ->> 'icon', (svc ->> 'module')::public.service_module, (svc ->> 'price')::numeric, coalesce((svc ->> 'visible')::boolean, false),
+            (select count(*) from public.services))
+    returning id into v_service;
+    select id into v_wf from public.service_workflows where service_id = v_service and status = 'draft';
+
+    i := 0;
+    for st in select * from jsonb_array_elements(svc -> 'steps') loop
+      i := i + 1;
+      insert into public.workflow_steps (
+        workflow_id, sort_order, step_key, name_ar, name_en, client_instructions, is_required, duration_value, duration_unit,
+        assignee_type, assignee_role_id, assignee_department_id, requires_approval, approver_role_id,
+        client_action_required, is_client_visible, completion_status_label_ar, sets_request_status, auto_create_task)
+      values (
+        v_wf, i, st ->> 'k', st ->> 'ar', st ->> 'en', st ->> 'instr', coalesce((st ->> 'req')::boolean, true),
+        (st ->> 'd')::int, coalesce(st ->> 'u', 'business_days')::public.duration_unit,
+        split_part(st ->> 'a', ':', 1)::public.assignee_type,
+        case when split_part(st ->> 'a', ':', 1) = 'role' then (select id from public.roles where key = split_part(st ->> 'a', ':', 2)) end,
+        case when split_part(st ->> 'a', ':', 1) = 'department' then (select id from public.departments where name_en = split_part(st ->> 'a', ':', 2)) end,
+        st ? 'appr', (select id from public.roles where key = st ->> 'appr'),
+        coalesce((st ->> 'client')::boolean, false), coalesce((st ->> 'vis')::boolean, true),
+        st ->> 'label', (st ->> 'status')::public.request_status, coalesce((st ->> 'task')::boolean, false))
+      returning id into v_step;
+
+      j := 0;
+      for fld in select * from jsonb_array_elements(coalesce(st -> 'fields', '[]'::jsonb)) loop
+        j := j + 1;
+        insert into public.required_fields (workflow_step_id, field_key, label_ar, label_en, field_type, options, validation, is_required, filled_by, sort_order, maps_to)
+        values (v_step, fld ->> 'k', fld ->> 'ar', fld ->> 'en', (fld ->> 't')::public.field_type,
+                coalesce((select jsonb_agg(jsonb_build_object('value', o ->> 0, 'label_ar', o ->> 1, 'label_en', o ->> 2))
+                          from jsonb_array_elements(fld -> 'opts') o), '[]'::jsonb),
+                jsonb_strip_nulls(jsonb_build_object('min', fld -> 'min', 'max', fld -> 'max')),
+                coalesce((fld ->> 'req')::boolean, true), (fld ->> 'by')::public.field_filler, j, fld ->> 'maps');
+      end loop;
+
+      j := 0;
+      for doc in select * from jsonb_array_elements(coalesce(st -> 'docs', '[]'::jsonb)) loop
+        j := j + 1;
+        insert into public.required_documents (workflow_step_id, document_type_id, is_required, sort_order)
+        values (v_step, (select id from public.document_types where key = doc ->> 0), (doc ->> 1)::boolean, j);
+      end loop;
+    end loop;
+
+    if coalesce((svc ->> 'publish')::boolean, true) then
+      perform public.publish_workflow(v_wf, coalesce(svc ->> 'note', 'الإصدار الأول'));
+      update public.services set is_active = coalesce((svc ->> 'active')::boolean, true) where id = v_service;
+    end if;
+  end loop;
+
+  -- CF-LLC v2: document review becomes its own step (between data collection and name reservation)
+  select id into v_service from public.services where code = 'CF-LLC';
+  v_llc := public.create_workflow_draft(v_service);
+  v_step := public.insert_workflow_step(v_llc, 2, 'مراجعة المستندات', 'Document review');
+  update public.workflow_steps set
+    duration_value = 2, duration_unit = 'business_days', assignee_type = 'department',
+    assignee_department_id = (select id from public.departments where name_en = 'Operations'),
+    requires_approval = true, approver_role_id = (select id from public.roles where key = 'manager'),
+    is_client_visible = true, completion_status_label_ar = 'تمت مراجعة مستنداتك',
+    description = 'مراجعة مستندات الشركاء والمقر قبل حجز الاسم.'
+  where id = v_step;
+  perform public.publish_workflow(v_llc, 'فصل مراجعة المستندات في خطوة مستقلة');
+
+  perform set_config('request.jwt.claims', '', true);
+end;
+$$;
