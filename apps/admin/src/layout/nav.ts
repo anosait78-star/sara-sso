@@ -41,9 +41,9 @@ export const NAV: NavGroup[] = [
     key: 'lines',
     items: [
       { key: 'realEstate', to: '/real-estate', icon: Building2, perm: 'properties.view', ready: false },
-      { key: 'insurance', to: '/insurance', icon: ShieldCheck, perm: 'insurance.view', ready: false },
-      { key: 'formation', to: '/company-formation', icon: Landmark, perm: 'company_formation.view', ready: false },
-      { key: 'loans', to: '/loans', icon: Banknote, perm: 'loans.view', ready: false },
+      { key: 'insurance', to: '/insurance', icon: ShieldCheck, perm: 'insurance.view', ready: true },
+      { key: 'formation', to: '/company-formation', icon: Landmark, perm: 'company_formation.view', ready: true },
+      { key: 'loans', to: '/loans', icon: Banknote, perm: 'loans.view', ready: true },
     ],
   },
   {

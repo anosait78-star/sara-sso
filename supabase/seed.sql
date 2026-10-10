@@ -167,23 +167,23 @@ begin
        {"k": "collect_data", "ar": "جمع البيانات", "en": "Collect data", "d": 2, "a": "request_owner", "client": true, "label": "تم استلام بياناتك",
         "instr": "ارفع بطاقات الشركاء وعقد المقر وأكمل بيانات الشركة.", "status": "waiting_client",
         "fields": [
-          {"k": "proposed_names", "ar": "الأسماء المقترحة للشركة (3)", "en": "Proposed names (3)", "t": "textarea", "by": "client"},
-          {"k": "activity", "ar": "النشاط التجاري", "en": "Business activity", "t": "select", "by": "client",
+          {"maps": "company_files.proposed_names", "k": "proposed_names", "ar": "الأسماء المقترحة للشركة (3)", "en": "Proposed names (3)", "t": "textarea", "by": "client"},
+          {"maps": "company_files.activity", "k": "activity", "ar": "النشاط التجاري", "en": "Business activity", "t": "select", "by": "client",
            "opts": [["trade", "تجارة عامة", "General trade"], ["contracting", "مقاولات", "Contracting"], ["it", "برمجيات وتكنولوجيا", "IT"], ["import_export", "استيراد وتصدير", "Import & export"]]},
-          {"k": "capital", "ar": "رأس المال", "en": "Capital", "t": "money", "by": "client", "min": 1000},
+          {"maps": "company_files.capital", "k": "capital", "ar": "رأس المال", "en": "Capital", "t": "money", "by": "client", "min": 1000},
           {"k": "partners_count", "ar": "عدد الشركاء", "en": "Number of partners", "t": "number", "by": "client", "min": 2, "max": 50}],
         "docs": [["partner_ids", true], ["lease_contract", true], ["utility_bill", false]]},
        {"k": "name_reservation", "ar": "حجز الاسم", "en": "Name reservation", "d": 3, "a": "department:Operations", "label": "تم حجز الاسم التجاري",
-        "fields": [{"k": "approved_name", "ar": "الاسم المعتمد", "en": "Approved name", "t": "text", "by": "staff"}],
+        "fields": [{"maps": "company_files.approved_name", "k": "approved_name", "ar": "الاسم المعتمد", "en": "Approved name", "t": "text", "by": "staff"}],
         "docs": [["name_reservation", true]]},
        {"k": "company_incorporation", "ar": "تأسيس الشركة", "en": "Company incorporation", "d": 5, "a": "department:Operations", "label": "تم توقيع عقد التأسيس",
         "fields": [{"k": "contract_date", "ar": "تاريخ توقيع العقد", "en": "Contract date", "t": "date", "by": "staff"}],
         "docs": [["articles_of_association", true], ["capital_deposit_certificate", true]]},
        {"k": "tax_card", "ar": "البطاقة الضريبية", "en": "Tax card", "d": 4, "a": "department:Operations", "label": "تم استخراج البطاقة الضريبية",
-        "fields": [{"k": "tax_card_no", "ar": "رقم البطاقة الضريبية", "en": "Tax card no.", "t": "text", "by": "staff"}],
+        "fields": [{"maps": "company_files.tax_card_no", "k": "tax_card_no", "ar": "رقم البطاقة الضريبية", "en": "Tax card no.", "t": "text", "by": "staff"}],
         "docs": [["tax_card", true]]},
        {"k": "commercial_register", "ar": "السجل التجاري", "en": "Commercial register", "d": 3, "a": "department:Operations", "label": "تم القيد في السجل التجاري",
-        "fields": [{"k": "commercial_register_no", "ar": "رقم السجل التجاري", "en": "Commercial register no.", "t": "text", "by": "staff"}],
+        "fields": [{"maps": "company_files.commercial_register_no", "k": "commercial_register_no", "ar": "رقم السجل التجاري", "en": "Commercial register no.", "t": "text", "by": "staff"}],
         "docs": [["commercial_register", true]]},
        {"k": "delivery", "ar": "التسليم", "en": "Delivery", "d": 1, "a": "department:Customer Service", "client": true, "label": "تم تسليم أوراق الشركة",
         "status": "completed", "instr": "سيتم التواصل معك لتحديد موعد استلام الأوراق الأصلية."}]},
@@ -224,15 +224,18 @@ begin
      "steps": [
        {"k": "collect_data", "ar": "بيانات السيارة", "en": "Vehicle data", "d": 1, "a": "request_owner", "client": true, "label": "تم استلام بيانات السيارة",
         "fields": [
-          {"k": "car_model", "ar": "الماركة والموديل", "en": "Make & model", "t": "text", "by": "client"},
+          {"maps": "insurance_policies.subject", "k": "car_model", "ar": "الماركة والموديل", "en": "Make & model", "t": "text", "by": "client"},
           {"k": "car_year", "ar": "سنة الصنع", "en": "Year", "t": "number", "by": "client", "min": 1990, "max": 2027},
           {"k": "car_value", "ar": "القيمة التقديرية", "en": "Estimated value", "t": "money", "by": "client"}],
         "docs": [["car_license", true], ["driving_license", true], ["national_id", true]]},
        {"k": "inspection", "ar": "معاينة السيارة", "en": "Vehicle inspection", "d": 2, "a": "department:Operations", "docs": [["car_photos", true]]},
        {"k": "quotes", "ar": "عروض شركات التأمين", "en": "Insurer quotes", "d": 2, "a": "role:sales", "label": "عروض الأسعار جاهزة", "client": true,
-        "fields": [{"k": "chosen_company", "ar": "الشركة المختارة", "en": "Chosen insurer", "t": "text", "by": "client"}]},
+        "fields": [{"maps": "insurance_policies.insurance_company", "k": "chosen_company", "ar": "الشركة المختارة", "en": "Chosen insurer", "t": "text", "by": "client"}]},
        {"k": "policy_issuance", "ar": "إصدار الوثيقة", "en": "Policy issuance", "d": 3, "a": "department:Operations", "label": "تم إصدار الوثيقة",
-        "fields": [{"k": "policy_no", "ar": "رقم الوثيقة", "en": "Policy no.", "t": "text", "by": "staff"}, {"k": "end_date", "ar": "تاريخ الانتهاء", "en": "End date", "t": "date", "by": "staff"}]},
+        "fields": [{"maps": "insurance_policies.policy_no", "k": "policy_no", "ar": "رقم الوثيقة", "en": "Policy no.", "t": "text", "by": "staff"},
+                   {"maps": "insurance_policies.start_date", "k": "start_date", "ar": "تاريخ البداية", "en": "Start date", "t": "date", "by": "staff"},
+                   {"maps": "insurance_policies.end_date", "k": "end_date", "ar": "تاريخ الانتهاء", "en": "End date", "t": "date", "by": "staff"},
+                   {"maps": "insurance_policies.premium", "k": "premium", "ar": "القسط السنوي", "en": "Annual premium", "t": "money", "by": "staff", "req": false}]},
        {"k": "delivery", "ar": "التسليم", "en": "Delivery", "d": 1, "a": "department:Customer Service", "status": "completed"}]},
 
     {"code": "INS-MED", "cat": "insurance", "module": "insurance", "icon": "heart-pulse", "price": 400, "visible": true,
@@ -243,7 +246,10 @@ begin
                    {"k": "plan", "ar": "نوع التغطية", "en": "Plan", "t": "select", "by": "client", "opts": [["basic", "أساسية", "Basic"], ["plus", "متوسطة", "Plus"], ["premium", "شاملة", "Premium"]]}],
         "docs": [["national_id", true], ["medical_report", false]]},
        {"k": "quotes", "ar": "عروض شركات التأمين", "en": "Insurer quotes", "d": 3, "a": "role:sales", "client": true, "label": "عروض الأسعار جاهزة"},
-       {"k": "policy_issuance", "ar": "إصدار الوثيقة", "en": "Policy issuance", "d": 5, "a": "department:Operations", "label": "تم إصدار الوثيقة"},
+       {"k": "policy_issuance", "ar": "إصدار الوثيقة", "en": "Policy issuance", "d": 5, "a": "department:Operations", "label": "تم إصدار الوثيقة",
+        "fields": [{"maps": "insurance_policies.policy_no", "k": "policy_no", "ar": "رقم الوثيقة", "en": "Policy no.", "t": "text", "by": "staff"},
+                   {"maps": "insurance_policies.start_date", "k": "start_date", "ar": "تاريخ البداية", "en": "Start date", "t": "date", "by": "staff"},
+                   {"maps": "insurance_policies.end_date", "k": "end_date", "ar": "تاريخ الانتهاء", "en": "End date", "t": "date", "by": "staff"}]},
        {"k": "delivery", "ar": "التسليم", "en": "Delivery", "d": 1, "a": "department:Customer Service", "status": "completed"}]},
 
     {"code": "INS-RENEW", "cat": "insurance", "module": "insurance", "icon": "refresh-cw", "price": 150, "visible": false,
@@ -281,9 +287,11 @@ begin
      "ar": "قرض رأس مال عامل", "en": "Working capital loan",
      "steps": [
        {"k": "collect_data", "ar": "بيانات النشاط", "en": "Business data", "d": 2, "a": "request_owner", "client": true,
-        "fields": [{"k": "requested_amount", "ar": "المبلغ المطلوب", "en": "Requested amount", "t": "money", "by": "client", "min": 50000},
-                   {"k": "annual_revenue", "ar": "الإيراد السنوي", "en": "Annual revenue", "t": "money", "by": "client"},
-                   {"k": "years_in_business", "ar": "سنوات العمل", "en": "Years in business", "t": "number", "by": "client", "min": 0}],
+        "fields": [{"maps": "loan_applications.requested_amount", "k": "requested_amount", "ar": "المبلغ المطلوب", "en": "Requested amount", "t": "money", "by": "client", "min": 50000},
+                   {"maps": "loan_applications.annual_revenue", "k": "annual_revenue", "ar": "الإيراد السنوي", "en": "Annual revenue", "t": "money", "by": "client"},
+                   {"maps": "loan_applications.years_in_business", "k": "years_in_business", "ar": "سنوات العمل", "en": "Years in business", "t": "number", "by": "client", "min": 0},
+                   {"maps": "loan_applications.tenor_months", "k": "tenor_months", "ar": "مدة التمويل (شهور)", "en": "Tenor (months)", "t": "number", "by": "client", "min": 6, "max": 120, "req": false},
+                   {"maps": "loan_applications.purpose", "k": "purpose", "ar": "الغرض من التمويل", "en": "Purpose", "t": "textarea", "by": "client", "req": false}],
         "docs": [["commercial_register", true], ["tax_card", true], ["bank_statement", true]]},
        {"k": "financial_analysis", "ar": "التحليل المالي", "en": "Financial analysis", "d": 3, "a": "department:Finance", "vis": false},
        {"k": "file_preparation", "ar": "تجهيز ملف التمويل", "en": "File preparation", "d": 3, "a": "department:Operations", "appr": "manager",
@@ -330,12 +338,12 @@ begin
       j := 0;
       for fld in select * from jsonb_array_elements(coalesce(st -> 'fields', '[]'::jsonb)) loop
         j := j + 1;
-        insert into public.required_fields (workflow_step_id, field_key, label_ar, label_en, field_type, options, validation, is_required, filled_by, sort_order)
+        insert into public.required_fields (workflow_step_id, field_key, label_ar, label_en, field_type, options, validation, is_required, filled_by, sort_order, maps_to)
         values (v_step, fld ->> 'k', fld ->> 'ar', fld ->> 'en', (fld ->> 't')::public.field_type,
                 coalesce((select jsonb_agg(jsonb_build_object('value', o ->> 0, 'label_ar', o ->> 1, 'label_en', o ->> 2))
                           from jsonb_array_elements(fld -> 'opts') o), '[]'::jsonb),
                 jsonb_strip_nulls(jsonb_build_object('min', fld -> 'min', 'max', fld -> 'max')),
-                coalesce((fld ->> 'req')::boolean, true), (fld ->> 'by')::public.field_filler, j);
+                coalesce((fld ->> 'req')::boolean, true), (fld ->> 'by')::public.field_filler, j, fld ->> 'maps');
       end loop;
 
       j := 0;
@@ -411,7 +419,7 @@ begin
   -- 3) working capital loan — bank statement rejected
   r := public.create_service_request((select id from public.services where code = 'LN-WC'), c_nile, e_mona, 'urgent', 'جهة التمويل المقترحة: بنك مصر');
   s := (select current_step_id from public.service_requests where id = r);
-  perform public.submit_step_data(s, '{"requested_amount": 1500000, "annual_revenue": 6000000, "years_in_business": 7}');
+  perform public.submit_step_data(s, '{"requested_amount": 1500000, "annual_revenue": 6000000, "years_in_business": 7, "tenor_months": 36, "purpose": "تمويل شراء خامات لعقود توريد جديدة"}');
   perform public.receive_document((select id from public.documents where request_step_id = s and name_ar = 'مستخرج السجل التجاري'), null);
   perform public.receive_document((select id from public.documents where request_step_id = s and name_ar = 'البطاقة الضريبية'), null);
   perform public.reject_document((select id from public.documents where request_step_id = s and name_ar like 'كشف حساب%'),
@@ -434,3 +442,61 @@ begin
   perform set_config('request.jwt.claims', '', true);
 end;
 $$;
+
+-- ---------------------------------------------------------------------
+-- Company file (Phase 6): the LLC of Ahmed, opened from REQ-000001 (mapped fields copied),
+-- two partners, and the completed tax card request (REQ-000004) linked to the same company.
+-- ---------------------------------------------------------------------
+do $$
+declare
+  v_file uuid;
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', '11111111-1111-4111-8111-111111111111', 'role', 'authenticated')::text, true);
+  v_file := public.create_company_file_from_request((select id from public.service_requests where request_no = 'REQ-000001'));
+  update public.company_files set address = '12 شارع التسعين — التجمع الخامس', city = 'القاهرة الجديدة' where id = v_file;
+  insert into public.company_partners (company_file_id, full_name, national_id, share_percent, is_manager, phone, customer_id, sort_order)
+  values (v_file, 'أحمد محمد عبدالله السيد', '29003141201234', 60, true, '+201002345678', (select id from public.customers where phone = '+201002345678'), 1),
+         (v_file, 'محمود علي حسن إبراهيم', '28807231401236', 40, false, null, null, 2);
+  perform public.link_request_company_file((select id from public.service_requests where request_no = 'REQ-000004'), v_file);
+  perform set_config('request.jwt.claims', '', true);
+end;
+$$;
+
+-- ---------------------------------------------------------------------
+-- Insurance + loans (Phase 6):
+--   Ahmed: car policy expiring in 12 days (reminder job -> renewal task + notifications), medical policy active.
+--   Nile company: business policy expired; LN-00001 opened from REQ-000003 and submitted to two banks.
+--   Hala: the car insurance request (REQ-000002) opens a pending policy file.
+-- ---------------------------------------------------------------------
+do $do$
+declare
+  c_ahmed uuid := (select id from public.customers where phone = '+201002345678');
+  c_nile uuid := (select id from public.customers where phone = '+201228764410');
+  v_loan uuid;
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', '11111111-1111-4111-8111-111111111111', 'role', 'authenticated')::text, true);
+  insert into public.insurance_policies (customer_id, insurance_type_id, insurance_company_id, policy_no, subject, start_date, end_date,
+                                         premium, coverage_amount, payment_frequency, status, owner_employee_id)
+  values
+    (c_ahmed, (select id from public.insurance_types where key = 'car'), (select id from public.insurance_companies where name_ar = 'مصر للتأمين'),
+     'MI-2025-118734', 'هيونداي إلنترا 2021', current_date - 353, current_date + 12, 9800, 650000, 'annual', 'active',
+     (select id from public.employees where profile_id = (select id from auth.users where email = 'nourhan@sso.test'))),
+    (c_ahmed, (select id from public.insurance_types where key = 'medical'), (select id from public.insurance_companies where name_ar = 'أليانز مصر'),
+     'ALZ-MED-55102', 'الأسرة (4 أفراد)', current_date - 165, current_date + 200, 24000, 400000, 'quarterly', 'active',
+     (select id from public.employees where profile_id = (select id from auth.users where email = 'nourhan@sso.test'))),
+    (c_nile, (select id from public.insurance_types where key = 'business'), (select id from public.insurance_companies where name_ar = 'أكسا مصر'),
+     'AXA-BUS-7731', 'المخازن — حريق وسرقة', current_date - 370, current_date - 5, 31500, 2500000, 'annual', 'active',
+     (select id from public.employees where profile_id = (select id from auth.users where email = 'mona@sso.test')));
+  perform public.create_policy_from_request((select id from public.service_requests where request_no = 'REQ-000002'));
+
+  v_loan := public.create_loan_from_request((select id from public.service_requests where request_no = 'REQ-000003'));
+  update public.loan_applications set sector = 'توريدات صناعية', employees_count = 24, collateral = 'شيكات مقابل عقود التوريد' where id = v_loan;
+  insert into public.loan_entity_submissions (loan_application_id, financing_entity_id, submitted_on, status)
+  values (v_loan, (select id from public.financing_entities where name_ar = 'بنك مصر'), current_date - 6, 'under_review');
+  insert into public.loan_entity_submissions (loan_application_id, financing_entity_id, submitted_on, status, offered_amount, offered_rate, offered_tenor_months, decision_note)
+  values (v_loan, (select id from public.financing_entities where name_ar = 'البنك الأهلي المصري'), current_date - 6, 'approved', 1200000, 21.5, 36,
+          'موافقة مبدئية بشرط ضمان شيكات');
+  perform set_config('request.jwt.claims', '', true);
+  perform app.run_policy_reminders();
+end;
+$do$;

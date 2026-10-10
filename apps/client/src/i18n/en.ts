@@ -63,6 +63,12 @@ export const en: Messages = {
   notifications: { title: 'Notifications', empty: 'No notifications', markAll: 'Mark all as read', today: 'Today', earlier: 'Earlier' },
   messages: { title: 'Messages', placeholder: 'Write your message…', empty: 'No messages yet. Ask anything about your request.', you: 'You', team: 'SSO team' },
   account: {
+    companies: 'My companies', commercialRegister: 'Commercial register', taxCard: 'Tax card',
+    companyStatus: { draft: 'Being prepared', in_progress: 'Being formed', established: 'Established', closed: 'Closed' },
+    policies: 'Insurance policies', insurer: 'Insurer', policyNo: 'Policy no.', validUntil: 'Valid until',
+    policyStatus: { pending: 'Being issued', active: 'Active', expiring: 'Expiring soon — contact us to renew', expired: 'Expired', renewed: 'Renewed', cancelled: 'Cancelled' },
+    loans: 'Financing requests', requestedAmount: 'Requested amount', approvedAmount: 'Approved amount',
+    loanStatus: { draft: 'Being prepared', preparing: 'Preparing the file', submitted: 'Under lender review', approved: 'Approved', rejected: 'Not approved', disbursed: 'Disbursed', cancelled: 'Cancelled' },
     title: 'Account', language: 'Language', changePassword: 'Change password', contact: 'Contact us', customerNo: 'Customer no.', phone: 'Phone',
     nationalId: 'National ID', inquiry: 'General inquiry', inquiryPlaceholder: 'Write your question and our team will contact you', inquirySent: 'Your inquiry was sent',
   },

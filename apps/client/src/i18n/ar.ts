@@ -105,6 +105,12 @@ export const ar = {
   notifications: { title: 'الإشعارات', empty: 'لا توجد إشعارات', markAll: 'تحديد الكل كمقروء', today: 'اليوم', earlier: 'سابقًا' },
   messages: { title: 'الرسائل', placeholder: 'اكتب رسالتك…', empty: 'لا توجد رسائل بعد. اسأل عن أي شيء يخص طلبك.', you: 'أنت', team: 'فريق SSO' },
   account: {
+    companies: 'شركاتي', commercialRegister: 'السجل التجاري', taxCard: 'البطاقة الضريبية',
+    companyStatus: { draft: 'قيد الإعداد', in_progress: 'جاري التأسيس', established: 'تم التأسيس', closed: 'مغلقة' },
+    policies: 'وثائق التأمين', insurer: 'شركة التأمين', policyNo: 'رقم الوثيقة', validUntil: 'سارية حتى',
+    policyStatus: { pending: 'جاري الإصدار', active: 'سارية', expiring: 'تنتهي قريبًا — تواصل معنا للتجديد', expired: 'منتهية', renewed: 'تم تجديدها', cancelled: 'ملغاة' },
+    loans: 'طلبات التمويل', requestedAmount: 'المبلغ المطلوب', approvedAmount: 'المبلغ المعتمد',
+    loanStatus: { draft: 'قيد الإعداد', preparing: 'جاري تجهيز الملف', submitted: 'قيد الدراسة لدى جهة التمويل', approved: 'تمت الموافقة', rejected: 'لم تتم الموافقة', disbursed: 'تم الصرف', cancelled: 'ملغي' },
     title: 'حسابي', language: 'اللغة', changePassword: 'تغيير كلمة السر', contact: 'تواصل معنا', customerNo: 'رقم العميل', phone: 'الهاتف',
     nationalId: 'الرقم القومي', inquiry: 'استفسار عام', inquiryPlaceholder: 'اكتب استفسارك وسيتواصل معك فريقنا', inquirySent: 'تم إرسال استفسارك',
   },

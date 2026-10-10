@@ -13,6 +13,9 @@ export interface RequestRow {
   current_step_id: string | null; owner_employee_id: string | null; department_id: string | null; priority: Priority; source: string;
   notes: string | null; submitted_at: string | null; due_at: string | null; expected_completion_at: string | null; completed_at: string | null;
   cancelled_reason: string | null; hold_reason: string | null; total_amount: number | null; paid_amount: number; is_overdue: boolean; created_at: string;
+  company_file_id: string | null;
+  insurance_policy_id: string | null;
+  loan_application_id: string | null;
   customer?: { id: string; full_name: string; company_name: string | null; customer_type: 'individual' | 'company'; phone: string; customer_no: string | null } | null;
   service?: { id: string; code: string; name_ar: string; name_en: string | null; icon: string | null; module_key: string } | null;
   workflow?: { version: number } | null;

@@ -172,7 +172,7 @@ export function RequestsPage() {
 // ---------- create ----------
 export interface CustomerPick { id: string; title: string }
 
-function CustomerPicker({ value, onChange }: { value: CustomerPick | null; onChange: (c: CustomerPick | null) => void }) {
+export function CustomerPicker({ value, onChange }: { value: CustomerPick | null; onChange: (c: CustomerPick | null) => void }) {
   const { t } = useTranslation();
   const [q, setQ] = useState('');
   const res = useQuery({
@@ -210,7 +210,26 @@ function CustomerPicker({ value, onChange }: { value: CustomerPick | null; onCha
   );
 }
 
-export function NewRequestDrawer({ open, onOpenChange, customer }: { open: boolean; onOpenChange: (v: boolean) => void; customer?: CustomerPick }) {
+/** A business-line file the new request is linked to right after it is created. */
+export type RequestLink =
+  | { kind: 'company'; id: string }
+  | { kind: 'policy'; id: string }
+  | { kind: 'loan'; id: string };
+
+async function linkNewRequest(requestId: string, link: RequestLink) {
+  const { error } = link.kind === 'company'
+    ? await supabase.rpc('link_request_company_file', { p_request_id: requestId, p_company_file_id: link.id })
+    : link.kind === 'policy'
+      ? await supabase.rpc('link_request_policy', { p_request_id: requestId, p_policy_id: link.id })
+      : await supabase.rpc('link_request_loan', { p_request_id: requestId, p_loan_id: link.id });
+  if (error) throw error;
+}
+
+export function NewRequestDrawer({ open, onOpenChange, customer, link }: {
+  open: boolean; onOpenChange: (v: boolean) => void; customer?: CustomerPick;
+  /** procedure for an existing company / policy / loan file: the new request is linked to it */
+  link?: RequestLink;
+}) {
   const { t } = useTranslation();
   const lang = useLang();
   const { can, staff } = useAuth();
@@ -231,6 +250,7 @@ export function NewRequestDrawer({ open, onOpenChange, customer }: { open: boole
         p_service_id: serviceId, p_customer_id: pick!.id, p_owner_employee_id: ownerId || undefined, p_priority: priority, p_notes: notes || undefined,
       });
       if (error) throw error;
+      if (link) await linkNewRequest(data as string, link);
       return data as string;
     },
     onSuccess: (id) => {

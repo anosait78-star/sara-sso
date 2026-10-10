@@ -14,6 +14,8 @@ import { Badge, Button, Card, CardHeader, EmptyState, Field, Input, Select, Spin
 import { Modal } from '@/components/workflow/WorkflowDialogs';
 import { DocumentReview } from '@/components/requests/DocumentReview';
 import { RequestMessages } from '@/components/requests/RequestMessages';
+import { CompanyFileCard } from '@/components/requests/CompanyFileCard';
+import { LoanCard, PolicyCard } from '@/components/requests/ModuleCards';
 import { useAuth } from '@/lib/auth';
 import { fmtDate, toLocalInput, fromLocalInput, useEmployeeOptions, useLang } from '@/lib/crm';
 import {
@@ -174,6 +176,16 @@ export function RequestPage() {
             <Card className="flex items-center gap-3 p-4 text-success"><CheckCircle2 className="size-6" /><span className="font-bold">{t('requests.completedOn', { date: fmtDate(r.completed_at, lang) })}</span></Card>
           ) : null}
 
+          {(r.company_file_id || r.service?.module_key === 'company_formation') && (
+            <div className="lg:hidden"><CompanyFileCard requestId={r.id} customerId={r.customer_id} companyFileId={r.company_file_id} open={open} /></div>
+          )}
+          {(r.insurance_policy_id || r.service?.module_key === 'insurance') && (
+            <div className="lg:hidden"><PolicyCard requestId={r.id} customerId={r.customer_id} linkedId={r.insurance_policy_id} open={open} /></div>
+          )}
+          {(r.loan_application_id || r.service?.module_key === 'loans') && (
+            <div className="lg:hidden"><LoanCard requestId={r.id} customerId={r.customer_id} linkedId={r.loan_application_id} open={open} /></div>
+          )}
+
           <div className="flex gap-1 overflow-x-auto border-b border-line">
             {tabs.map((k) => (
               <button key={k} type="button" onClick={() => setTab(k)}
@@ -225,6 +237,15 @@ export function RequestPage() {
           {tab === 'timeline' && <div className="lg:hidden"><Timeline requestId={r.id} /></div>}
         </div>
         <div className="hidden space-y-4 lg:block">
+          {(r.company_file_id || r.service?.module_key === 'company_formation') && (
+            <CompanyFileCard requestId={r.id} customerId={r.customer_id} companyFileId={r.company_file_id} open={open} />
+          )}
+          {(r.insurance_policy_id || r.service?.module_key === 'insurance') && (
+            <PolicyCard requestId={r.id} customerId={r.customer_id} linkedId={r.insurance_policy_id} open={open} />
+          )}
+          {(r.loan_application_id || r.service?.module_key === 'loans') && (
+            <LoanCard requestId={r.id} customerId={r.customer_id} linkedId={r.loan_application_id} open={open} />
+          )}
           {r.notes && <Card className="p-4 text-sm"><div className="mb-1 text-xs font-bold text-ink-2">{t('requests.notes')}</div>{r.notes}</Card>}
           <Timeline requestId={r.id} />
         </div>

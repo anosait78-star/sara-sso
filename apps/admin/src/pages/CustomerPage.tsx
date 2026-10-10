@@ -14,6 +14,8 @@ import { cn, errorKey } from '@/lib/utils';
 import { CUSTOMER_SELECT, CustomerFormDrawer, type CustomerRow } from './CustomersPage';
 import { CustomerRequests } from '@/components/requests/CustomerRequests';
 import { ClientAccessCard } from '@/components/requests/ClientAccess';
+import { CustomerCompaniesCard } from '@/components/requests/CompanyFileCard';
+import { CustomerLoansCard, CustomerPoliciesCard } from '@/components/requests/ModuleCards';
 
 type Tab = 'overview' | 'requests' | 'followups' | 'appointments' | 'notes' | 'timeline';
 
@@ -147,6 +149,9 @@ export function CustomerPage() {
                 )}
               </Card>
               {c.customer_type === 'company' && <ContactsCard customerId={c.id} />}
+              <CustomerCompaniesCard customerId={c.id} />
+              <CustomerPoliciesCard customerId={c.id} />
+              <CustomerLoansCard customerId={c.id} />
               <ClientAccessCard customer={c} />
               <div className="flex items-center gap-2 rounded-xl bg-canvas px-4 py-3 text-xs text-ink-2"><Info className="size-4 shrink-0" />{t('customers.comingPhases')}</div>
             </>

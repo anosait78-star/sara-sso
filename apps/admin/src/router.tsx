@@ -3,6 +3,12 @@ import { AppShell, Guard } from './layout/AppShell';
 import { AccountPage, NotFoundPage } from './pages/AccountPage';
 import { AppointmentsPage } from './pages/AppointmentsPage';
 import { AuditLogPage } from './pages/AuditLogPage';
+import { CompanyFilePage } from './pages/CompanyFilePage';
+import { InsurancePage } from './pages/InsurancePage';
+import { LoanPage } from './pages/LoanPage';
+import { LoansPage } from './pages/LoansPage';
+import { PolicyPage } from './pages/PolicyPage';
+import { CompanyFilesPage } from './pages/CompanyFilesPage';
 import { CustomerPage } from './pages/CustomerPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { FollowUpsPage } from './pages/FollowUpsPage';
@@ -57,6 +63,12 @@ const routeTree = rootRoute.addChildren([
     page('/requests/$id', 'service_requests.view', RequestPage),
     page('/tasks', 'tasks.view', TasksPage),
     page('/documents', 'documents.view', DocumentsPage),
+    page('/company-formation', 'company_formation.view', CompanyFilesPage),
+    page('/company-formation/$id', 'company_formation.view', CompanyFilePage),
+    page('/insurance', 'insurance.view', InsurancePage),
+    page('/insurance/$id', 'insurance.view', PolicyPage),
+    page('/loans', 'loans.view', LoansPage),
+    page('/loans/$id', 'loans.view', LoanPage),
     page('/services', 'services_config.view', ServicesPage),
     page('/services/$id', 'services_config.view', ServicePage),
     page('/services/$id/workflow', 'services_config.view', WorkflowBuilderPage),

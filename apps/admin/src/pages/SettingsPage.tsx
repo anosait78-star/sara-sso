@@ -3,6 +3,7 @@ import { Building2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { ReferenceListsCard } from '@/components/ReferenceLists';
 import { Button, Card, CardHeader, Field, Input, PageHeader, Spinner } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
@@ -68,6 +69,7 @@ export function SettingsPage() {
           </fieldset>
         </div>
       </Card>
+      <ReferenceListsCard editable={editable} />
     </div>
   );
 }
