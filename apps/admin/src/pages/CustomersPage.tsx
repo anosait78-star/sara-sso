@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { PhoneActions } from '@/components/crm';
+import { LinkRequestsCard } from '@/components/requests/ClientAccess';
 import { Avatar, Badge, Button, Card, Drawer, EmptyState, Field, Input, PageHeader, Select, Spinner } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { displayPhone, labelOf, useEmployeeOptions, useLang, useLookups } from '@/lib/crm';
@@ -17,6 +18,7 @@ export interface CustomerRow {
   national_id: string | null; commercial_register_no: string | null; tax_no: string | null; phone: string; alt_phone: string | null;
   email: string | null; address: string | null; city: string | null; birth_date: string | null; owner_employee_id: string | null;
   source: string | null; status: 'self_registered' | 'pending_link' | 'active' | 'inactive'; app_access: 'none' | 'active' | 'suspended';
+  user_id: string | null;
   converted_from_lead_id: string | null; created_at: string;
   owner?: { profile: { full_name: string } | null } | null;
 }
@@ -65,6 +67,7 @@ export function CustomersPage() {
   return (
     <div className="mx-auto max-w-7xl space-y-4">
       <PageHeader title={t('customers.title')} actions={can('customers', 'create') && <Button variant="primary" onClick={() => setCreating(true)}><Plus className="size-4" /> {t('customers.new')}</Button>} />
+      <LinkRequestsCard />
       <div className="flex gap-1 overflow-x-auto border-b border-line">
         {(Object.keys(tabStatuses) as Tab[]).map((k) => (
           <button key={k} type="button" onClick={() => setTab(k)} className={cn('-mb-px flex shrink-0 items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-semibold', tab === k ? 'border-brand text-brand' : 'border-transparent text-ink-2')}>

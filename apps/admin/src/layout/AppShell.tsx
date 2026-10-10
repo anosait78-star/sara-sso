@@ -1,9 +1,10 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
-import { Bell, ChevronDown, Globe, KeyRound, LogOut, Menu, UserRound, X } from 'lucide-react';
+import { ChevronDown, Globe, KeyRound, LogOut, Menu, UserRound, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GlobalSearch } from '@/components/GlobalSearch';
+import { NotificationsBell } from '@/components/NotificationsBell';
 import { Avatar, Button, Spinner } from '@/components/ui';
 import { setLocale, type Locale } from '@/i18n';
 import { useAuth } from '@/lib/auth';
@@ -209,9 +210,7 @@ function Topbar({ onMenu }: { onMenu: () => void }) {
         <Globe className="size-4" />
         <span className="hidden sm:inline">{t('topbar.language')}</span>
       </button>
-      <button type="button" className="relative grid size-10 place-items-center rounded-[10px] border border-line text-ink-2" aria-label="notifications">
-        <Bell className="size-[18px]" />
-      </button>
+      <NotificationsBell />
       <DropdownMenu.Root>
         <DropdownMenu.Trigger className="flex items-center gap-2 rounded-[10px] p-1 outline-none hover:bg-muted">
           <Avatar name={staff?.full_name ?? ''} />

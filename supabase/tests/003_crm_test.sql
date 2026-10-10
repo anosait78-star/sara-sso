@@ -67,14 +67,9 @@ select pg_temp.login('33333333-3333-4333-8333-333333333333');
 set local role authenticated;
 select is((select count(*) from public.leads)::int, 0, 'operations has no lead permissions');
 
--- ===================== Client linked to a customer =====================
+-- ===================== Client linked to a customer (seeded app account of Ahmed) =====================
 reset role;
-insert into auth.users (instance_id, id, aud, role, email, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
-values ('00000000-0000-0000-0000-000000000000', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'authenticated', 'authenticated',
-        '201002345678@clients.sso.internal', '{"user_type":"client"}', '{}', now(), now());
-select set_config('request.jwt.claims', '', true); -- act as the system for test setup
-update public.customers set user_id = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', app_access = 'active' where phone = '+201002345678';
-select pg_temp.login('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb');
+select pg_temp.login('c1c1c1c1-0000-4000-8000-000000000001');
 set local role authenticated;
 select is((select count(*) from public.notes)::int, 0, 'client cannot see internal notes');
 select is((select count(*) from public.activity_events where not visible_to_client)::int, 0, 'client sees only client-visible timeline events');

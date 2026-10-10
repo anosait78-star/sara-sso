@@ -10,6 +10,9 @@
 --   nourhan@sso.test  Sales         (المبيعات)
 --   heba@sso.test     Accountant    (المالية)
 --   tarek@sso.test    Operations    (suspended)
+--
+-- Client app (phone + password, same dev password):
+--   01002345678       أحمد محمد عبدالله السيد — linked customer with sample requests
 -- =====================================================================
 
 do $$
@@ -100,6 +103,33 @@ begin
   insert into public.leads (full_name, phone, interest_line, interest_details, source, owner_employee_id)
   values ('مصنع الأمل للبلاستيك', '+201559023381', 'loans', 'قرض رأس مال عامل 1.5M', 'website', e_mohamed)
   returning id into l2;
+end;
+$$;
+
+-- ---------------------------------------------------------------------
+-- Client app account (Phase 5): Ahmed signs in with his phone 01002345678 + the dev password.
+-- Phones map to an internal e-mail (PROJECT_PLAN §5.2).
+-- ---------------------------------------------------------------------
+do $$
+declare
+  v_user uuid := 'c1c1c1c1-0000-4000-8000-000000000001';
+begin
+  insert into auth.users (
+    instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+    raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+    confirmation_token, email_change, email_change_token_new, recovery_token
+  ) values (
+    '00000000-0000-0000-0000-000000000000', v_user, 'authenticated', 'authenticated', '201002345678@clients.sso.internal',
+    extensions.crypt('SsoDev2026!', extensions.gen_salt('bf')), now(),
+    jsonb_build_object('provider', 'email', 'providers', jsonb_build_array('email'), 'user_type', 'client', 'full_name', 'أحمد محمد عبدالله السيد'),
+    '{}'::jsonb, now(), now(), '', '', '', ''
+  );
+  insert into auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+  values (gen_random_uuid(), v_user, v_user::text,
+          jsonb_build_object('sub', v_user::text, 'email', '201002345678@clients.sso.internal', 'email_verified', true),
+          'email', now(), now(), now());
+  update public.profiles set phone = '+201002345678' where id = v_user;
+  update public.customers set user_id = v_user, app_access = 'active' where phone = '+201002345678';
 end;
 $$;
 

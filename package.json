@@ -7,12 +7,14 @@
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
-    "db:start": "supabase start -x vector,logflare,imgproxy,supavisor,studio,realtime,storage-api,mailpit,postgres-meta",
+    "db:start": "supabase start -x vector,logflare,imgproxy,supavisor,studio,realtime,mailpit,postgres-meta",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --local --schema public > packages/shared/src/database.types.ts",
-    "functions:serve": "supabase functions serve"
+    "functions:serve": "supabase functions serve",
+    "client": "pnpm --filter @sso/client start",
+    "client:web": "pnpm --filter @sso/client web"
   },
   "devDependencies": {
     "supabase": "2.90.0",

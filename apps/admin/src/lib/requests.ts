@@ -44,10 +44,12 @@ export interface RequestDocument {
   id: string; customer_id: string; request_id: string | null; request_step_id: string | null; document_type_id: string; name_ar: string; name_en: string | null;
   is_required: boolean; instructions_ar: string | null; status: DocumentStatus; received_physically: boolean; review_note: string | null;
   rejection_reason_id: string | null; rejection_note: string | null; reviewed_at: string | null; expires_at: string | null;
+  current_file_id: string | null; reused_from_document_id: string | null;
+  type?: { allowed_mime: string[]; max_size_mb: number; has_expiry: boolean } | null;
   reason?: { text_ar: string; text_en: string | null } | null;
   reviewer?: { profile: { full_name: string } | null } | null;
 }
-export const DOCUMENT_SELECT = '*, reason:rejection_reasons(text_ar, text_en), reviewer:employees!documents_reviewed_by_fkey(profile:profiles(full_name))';
+export const DOCUMENT_SELECT = '*, reason:rejection_reasons(text_ar, text_en), reviewer:employees!documents_reviewed_by_fkey(profile:profiles(full_name)), type:document_types(allowed_mime, max_size_mb, has_expiry)';
 
 export interface FieldValue { id: string; request_step_id: string; field_key: string; field_type: string; value: unknown; updated_at: string }
 

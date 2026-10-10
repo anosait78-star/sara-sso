@@ -2,8 +2,8 @@ import type { DynamicValue } from '@sso/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useParams } from '@tanstack/react-router';
 import {
-  AlertTriangle, Ban, Check, CheckCircle2, ChevronRight, CircleDashed, CirclePause, CirclePlay, Clock, FileCheck2, FileText, FileX2,
-  ListChecks, Pencil, Plus, RotateCcw, SkipForward, Smartphone, UserRound, UserRoundCog, XCircle,
+  AlertTriangle, Ban, Eye, Check, CheckCircle2, ChevronRight, CircleDashed, CirclePause, CirclePlay, Clock, FileCheck2, FileText, FileX2,
+  ListChecks, Pencil, Plus, RotateCcw, SkipForward, Smartphone, UserRound, UserRoundCog,
 } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,17 +12,19 @@ import { CompleteTaskDialog, FollowUpRow, PriorityLabel, TASK_SELECT, Timeline, 
 import { DynamicForm, formatFieldValue } from '@/components/requests/DynamicForm';
 import { Badge, Button, Card, CardHeader, EmptyState, Field, Input, Select, Spinner, Switch, Textarea } from '@/components/ui';
 import { Modal } from '@/components/workflow/WorkflowDialogs';
+import { DocumentReview } from '@/components/requests/DocumentReview';
+import { RequestMessages } from '@/components/requests/RequestMessages';
 import { useAuth } from '@/lib/auth';
 import { fmtDate, toLocalInput, fromLocalInput, useEmployeeOptions, useLang } from '@/lib/crm';
 import {
-  customerTitle, DOC_STATUS_TONE, isLate, REQUEST_STATUS_TONE, STEP_STATUS_TONE, useFieldValues, useRejectionReasons,
+  customerTitle, DOC_STATUS_TONE, isLate, REQUEST_STATUS_TONE, STEP_STATUS_TONE, useFieldValues,
   useRequest, useRequestDocuments, useRequestSteps, useStepMissing, type Priority, type RequestDocument, type RequestRow, type RequestStep,
 } from '@/lib/requests';
 import { ASSIGNEE_TYPES, DURATION_UNITS, nameOf, useDepartmentOptions, useRoleOptions, type AssigneeType, type DurationUnit } from '@/lib/services';
 import { supabase } from '@/lib/supabase';
 import { cn, errorKey } from '@/lib/utils';
 
-type Tab = 'data' | 'documents' | 'workflow' | 'tasks' | 'timeline';
+type Tab = 'data' | 'documents' | 'workflow' | 'messages' | 'tasks' | 'timeline';
 
 export function RequestPage() {
   const { id } = useParams({ strict: false }) as { id: string };
@@ -65,7 +67,7 @@ export function RequestPage() {
   if (!r) return <Card className="mx-auto max-w-md"><EmptyState title={t('forbidden.body')} /></Card>;
 
   const initialValues = Object.fromEntries((values.data ?? []).filter((v) => v.request_step_id === current?.id).map((v) => [v.field_key, v.value as DynamicValue]));
-  const tabs: Tab[] = ['data', 'documents', 'workflow', 'tasks', 'timeline'];
+  const tabs: Tab[] = ['data', 'documents', 'workflow', 'messages', 'tasks', 'timeline'];
   const stepDocs = (docs.data ?? []).filter((d) => d.request_step_id === current?.id);
 
   return (
@@ -218,6 +220,7 @@ export function RequestPage() {
             <Stepper steps={steps.data ?? []} currentId={current?.id} docs={docs.data ?? []}
               canAdhoc={canEdit} onAdhoc={() => setDialog('adhoc')} />
           )}
+          {tab === 'messages' && <RequestMessages requestId={r.id} open={open} />}
           {tab === 'tasks' && <RequestTasks requestId={r.id} />}
           {tab === 'timeline' && <div className="lg:hidden"><Timeline requestId={r.id} /></div>}
         </div>
@@ -293,10 +296,8 @@ function ResumeButton({ requestId, onDone }: { requestId: string; onDone: () => 
 function DocumentList({ docs, onChanged }: { docs: RequestDocument[]; onChanged: () => void }) {
   const { t } = useTranslation();
   const lang = useLang();
-  const { can } = useAuth();
-  const [receiving, setReceiving] = useState<RequestDocument | null>(null);
-  const [rejecting, setRejecting] = useState<RequestDocument | null>(null);
-  const canReview = can('documents', 'approve');
+  const [openId, setOpenId] = useState<string | null>(null);
+  const open = docs.find((d) => d.id === openId) ?? null;
   return (
     <ul className="divide-y divide-line">
       {docs.map((d) => (
@@ -306,6 +307,7 @@ function DocumentList({ docs, onChanged }: { docs: RequestDocument[]; onChanged:
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="font-semibold">{(lang === 'en' ? d.name_en : null) || d.name_ar}</span>
               {!d.is_required && <Badge tone="gray" dot={false}>{t('workflow.optionalBadge')}</Badge>}
+              {d.reused_from_document_id && <Badge tone="sky" dot={false}>{t('documents.reused')}</Badge>}
             </div>
             <div className="text-xs text-ink-3">
               {d.status === 'approved' && d.received_physically && `${t('requests.receivedPhysically')} · `}
@@ -317,50 +319,13 @@ function DocumentList({ docs, onChanged }: { docs: RequestDocument[]; onChanged:
             )}
           </div>
           <Badge tone={DOC_STATUS_TONE[d.status]}>{t(`requests.docStatuses.${d.status}`)}</Badge>
-          {canReview && (
-            <div className="flex gap-1.5">
-              {d.status !== 'approved' && <Button size="sm" variant="success" onClick={() => setReceiving(d)}><Check className="size-4" /> {t('requests.receive')}</Button>}
-              {d.status !== 'rejected' && <Button size="sm" variant="danger" onClick={() => setRejecting(d)}><XCircle className="size-4" /> {t('requests.reject')}</Button>}
-            </div>
-          )}
+          <Button size="sm" onClick={() => setOpenId(d.id)}><Eye className="size-4" /> {t('documents.openReview')}</Button>
         </li>
       ))}
-      <ReasonDialog open={!!receiving} onClose={() => setReceiving(null)} title={`${t('requests.receive')}: ${receiving?.name_ar ?? ''}`} label={t('requests.note')} optional
-        hint={t('requests.receiveHint')} onDone={onChanged}
-        run={(note) => supabase.rpc('receive_document', { p_document_id: receiving!.id, p_note: note || undefined })} />
-      <RejectDialog doc={rejecting} onClose={() => setRejecting(null)} onDone={onChanged} />
+      <Modal open={!!open} onOpenChange={(v) => !v && setOpenId(null)} wide title={open ? (lang === 'en' ? open.name_en : null) || open.name_ar : ''}>
+        {open && <DocumentReview doc={open} onChanged={onChanged} />}
+      </Modal>
     </ul>
-  );
-}
-
-function RejectDialog({ doc, onClose, onDone }: { doc: RequestDocument | null; onClose: () => void; onDone: () => void }) {
-  const { t } = useTranslation();
-  const lang = useLang();
-  const reasons = useRejectionReasons();
-  const [reasonId, setReasonId] = useState('');
-  const [note, setNote] = useState('');
-  const m = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.rpc('reject_document', { p_document_id: doc!.id, p_reason_id: (reasonId || null) as string, p_note: note || undefined });
-      if (error) throw error;
-    },
-    onSuccess: () => { setReasonId(''); setNote(''); onClose(); onDone(); },
-    onError: (e) => toast.error(t(requestErrorKey(e))),
-  });
-  return (
-    <Modal open={!!doc} onOpenChange={(v) => !v && onClose()} title={`${t('requests.reject')}: ${doc?.name_ar ?? ''}`} icon={<FileX2 className="size-5 text-danger" />}
-      footer={<><Button variant="danger" loading={m.isPending} disabled={!reasonId && !note.trim()} onClick={() => m.mutate()}>{t('requests.reject')}</Button><Button onClick={onClose}>{t('common.cancel')}</Button></>}>
-      <div className="space-y-4">
-        <Field label={`${t('requests.reason')} *`}>
-          <Select value={reasonId} onChange={(e) => setReasonId(e.target.value)}>
-            <option value="">{t('workflow.pick')}</option>
-            {(reasons.data ?? []).map((x) => <option key={x.id} value={x.id}>{(lang === 'en' ? x.text_en : null) || x.text_ar}</option>)}
-          </Select>
-        </Field>
-        <Field label={t('requests.note')}><Textarea value={note} onChange={(e) => setNote(e.target.value)} /></Field>
-        <p className="text-xs text-ink-3">{t('requests.rejectHint')}</p>
-      </div>
-    </Modal>
   );
 }
 

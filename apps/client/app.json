@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "SSO",
+    "slug": "sso-client",
+    "scheme": "sso",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sarasoliman.sso"
+    },
+    "android": {
+      "package": "com.sarasoliman.sso",
+      "adaptiveIcon": {
+        "backgroundColor": "#FFFFFF",
+        "foregroundImage": "./assets/icon.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-secure-store",
+      ["expo-localization", { "supportsRTL": true }],
+      "expo-font",
+      ["expo-image-picker", { "photosPermission": "يحتاج التطبيق الوصول للصور لرفع مستنداتك.", "cameraPermission": "يحتاج التطبيق الكاميرا لتصوير مستنداتك." }],
+      "expo-notifications"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

@@ -10,6 +10,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      account_link_requests: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          matched_customer_id: string
+          national_id: string
+          phone: string
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id?: string
+          matched_customer_id: string
+          national_id: string
+          phone: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          matched_customer_id?: string
+          national_id?: string
+          phone?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_link_requests_matched_customer_id_fkey"
+            columns: ["matched_customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_link_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activity_events: {
         Row: {
           actor_name: string | null
@@ -419,6 +476,59 @@ export type Database = {
         }
         Relationships: []
       }
+      document_files: {
+        Row: {
+          created_at: string
+          document_id: string
+          id: string
+          mime_type: string
+          original_name: string | null
+          review_note: string | null
+          review_status: string
+          size_bytes: number
+          storage_path: string
+          uploaded_by: string | null
+          uploader_type: string
+          version_no: number
+        }
+        Insert: {
+          created_at?: string
+          document_id: string
+          id?: string
+          mime_type: string
+          original_name?: string | null
+          review_note?: string | null
+          review_status?: string
+          size_bytes: number
+          storage_path: string
+          uploaded_by?: string | null
+          uploader_type: string
+          version_no: number
+        }
+        Update: {
+          created_at?: string
+          document_id?: string
+          id?: string
+          mime_type?: string
+          original_name?: string | null
+          review_note?: string | null
+          review_status?: string
+          size_bytes?: number
+          storage_path?: string
+          uploaded_by?: string | null
+          uploader_type?: string
+          version_no?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_files_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_types: {
         Row: {
           allowed_mime: string[]
@@ -431,6 +541,7 @@ export type Database = {
           max_size_mb: number
           name_ar: string
           name_en: string | null
+          reusable: boolean
           sort_order: number
           updated_at: string
         }
@@ -445,6 +556,7 @@ export type Database = {
           max_size_mb?: number
           name_ar: string
           name_en?: string | null
+          reusable?: boolean
           sort_order?: number
           updated_at?: string
         }
@@ -459,6 +571,7 @@ export type Database = {
           max_size_mb?: number
           name_ar?: string
           name_en?: string | null
+          reusable?: boolean
           sort_order?: number
           updated_at?: string
         }
@@ -467,6 +580,7 @@ export type Database = {
       documents: {
         Row: {
           created_at: string
+          current_file_id: string | null
           customer_id: string
           document_type_id: string
           expires_at: string | null
@@ -481,6 +595,7 @@ export type Database = {
           rejection_reason_id: string | null
           request_id: string | null
           request_step_id: string | null
+          reused_from_document_id: string | null
           review_note: string | null
           reviewed_at: string | null
           reviewed_by: string | null
@@ -489,6 +604,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          current_file_id?: string | null
           customer_id: string
           document_type_id: string
           expires_at?: string | null
@@ -503,6 +619,7 @@ export type Database = {
           rejection_reason_id?: string | null
           request_id?: string | null
           request_step_id?: string | null
+          reused_from_document_id?: string | null
           review_note?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -511,6 +628,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          current_file_id?: string | null
           customer_id?: string
           document_type_id?: string
           expires_at?: string | null
@@ -525,6 +643,7 @@ export type Database = {
           rejection_reason_id?: string | null
           request_id?: string | null
           request_step_id?: string | null
+          reused_from_document_id?: string | null
           review_note?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -532,6 +651,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "documents_current_file_id_fkey"
+            columns: ["current_file_id"]
+            isOneToOne: false
+            referencedRelation: "document_files"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "documents_customer_id_fkey"
             columns: ["customer_id"]
@@ -565,6 +691,13 @@ export type Database = {
             columns: ["request_step_id"]
             isOneToOne: false
             referencedRelation: "service_request_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_reused_from_document_id_fkey"
+            columns: ["reused_from_document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
             referencedColumns: ["id"]
           },
           {
@@ -933,6 +1066,51 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          channels: string[]
+          created_at: string
+          delivery_status: Json
+          entity_id: string | null
+          entity_type: string | null
+          event_key: string
+          id: string
+          link: string | null
+          read_at: string | null
+          recipient_user_id: string
+          title: string
+        }
+        Insert: {
+          body?: string | null
+          channels?: string[]
+          created_at?: string
+          delivery_status?: Json
+          entity_id?: string | null
+          entity_type?: string | null
+          event_key: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          recipient_user_id: string
+          title: string
+        }
+        Update: {
+          body?: string | null
+          channels?: string[]
+          created_at?: string
+          delivery_status?: Json
+          entity_id?: string | null
+          entity_type?: string | null
+          event_key?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          recipient_user_id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       permissions: {
         Row: {
           action: string
@@ -996,6 +1174,33 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           user_type?: Database["public"]["Enums"]["user_type"]
+        }
+        Relationships: []
+      }
+      push_tokens: {
+        Row: {
+          created_at: string
+          id: string
+          last_seen_at: string
+          platform: string
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_seen_at?: string
+          platform: string
+          token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_seen_at?: string
+          platform?: string
+          token?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1070,6 +1275,57 @@ export type Database = {
             columns: ["request_step_id"]
             isOneToOne: false
             referencedRelation: "service_request_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      request_messages: {
+        Row: {
+          body: string
+          created_at: string
+          customer_id: string
+          id: string
+          read_at: string | null
+          request_id: string | null
+          sender_name: string | null
+          sender_type: string
+          sender_user_id: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          customer_id: string
+          id?: string
+          read_at?: string | null
+          request_id?: string | null
+          sender_name?: string | null
+          sender_type: string
+          sender_user_id?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          customer_id?: string
+          id?: string
+          read_at?: string | null
+          request_id?: string | null
+          sender_name?: string | null
+          sender_type?: string
+          sender_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "request_messages_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "request_messages_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
             referencedColumns: ["id"]
           },
         ]
@@ -2035,6 +2291,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_account_link: {
+        Args: { p_link_id: string; p_note?: string }
+        Returns: undefined
+      }
       approve_request_step: {
         Args: { p_note?: string; p_request_step_id: string }
         Returns: undefined
@@ -2053,7 +2313,23 @@ export type Database = {
         }
         Returns: undefined
       }
+      check_client_registration: {
+        Args: { p_national_id: string; p_phone: string }
+        Returns: string
+      }
       clear_must_change_password: { Args: never; Returns: undefined }
+      client_create_request: {
+        Args: { p_notes?: string; p_service_id: string }
+        Returns: string
+      }
+      client_submit_step: {
+        Args: { p_request_step_id: string }
+        Returns: undefined
+      }
+      client_submit_step_data: {
+        Args: { p_request_step_id: string; p_values: Json }
+        Returns: undefined
+      }
       clone_workflow_as_draft: {
         Args: { p_change_note?: string; p_workflow_id: string }
         Returns: string
@@ -2084,6 +2360,7 @@ export type Database = {
       create_workflow_draft: { Args: { p_service_id: string }; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       delete_workflow_step: { Args: { p_step_id: string }; Returns: undefined }
+      get_company_contact: { Args: never; Returns: Json }
       get_my_permissions: {
         Args: never
         Returns: {
@@ -2131,6 +2408,10 @@ export type Database = {
         }
         Returns: string
       }
+      log_client_access_change: {
+        Args: { p_action: string; p_customer_id: string }
+        Returns: undefined
+      }
       log_lead_activity: {
         Args: {
           p_lead_id: string
@@ -2140,6 +2421,15 @@ export type Database = {
         }
         Returns: string
       }
+      mark_messages_read: {
+        Args: { p_request_id?: string }
+        Returns: undefined
+      }
+      mark_notifications_read: {
+        Args: { p_ids?: string[] }
+        Returns: undefined
+      }
+      my_account_status: { Args: never; Returns: Json }
       publish_workflow: {
         Args: { p_change_note?: string; p_workflow_id: string }
         Returns: Json
@@ -2153,12 +2443,43 @@ export type Database = {
         Returns: undefined
       }
       refresh_overdue_requests: { Args: never; Returns: number }
+      register_client_account: {
+        Args: {
+          p_full_name: string
+          p_national_id: string
+          p_phone: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      register_document_upload: {
+        Args: {
+          p_document_id: string
+          p_mime: string
+          p_original_name: string
+          p_path: string
+          p_size: number
+        }
+        Returns: string
+      }
+      register_push_token: {
+        Args: { p_platform: string; p_token: string }
+        Returns: undefined
+      }
+      reject_account_link: {
+        Args: { p_link_id: string; p_reason: string }
+        Returns: undefined
+      }
       reject_document: {
         Args: { p_document_id: string; p_note?: string; p_reason_id: string }
         Returns: undefined
       }
       reorder_workflow_steps: {
         Args: { p_step_ids: string[]; p_workflow_id: string }
+        Returns: undefined
+      }
+      request_new_document_copy: {
+        Args: { p_document_id: string; p_note: string }
         Returns: undefined
       }
       request_step_missing: {
@@ -2174,6 +2495,10 @@ export type Database = {
         Args: { p_reason: string; p_request_step_id: string }
         Returns: undefined
       }
+      send_request_message: {
+        Args: { p_body: string; p_request_id: string }
+        Returns: string
+      }
       set_request_hold: {
         Args: { p_hold: boolean; p_reason?: string; p_request_id: string }
         Returns: undefined
@@ -2184,6 +2509,10 @@ export type Database = {
       }
       skip_request_step: {
         Args: { p_reason: string; p_request_step_id: string }
+        Returns: undefined
+      }
+      start_document_review: {
+        Args: { p_document_id: string }
         Returns: undefined
       }
       submit_step_data: {

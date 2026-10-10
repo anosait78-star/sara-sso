@@ -4,8 +4,40 @@
     {
       "name": "admin",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@sso/admin", "dev"],
+      "runtimeArgs": [
+        "--filter",
+        "@sso/admin",
+        "dev"
+      ],
       "port": 5173
+    },
+    {
+      "name": "client",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@sso/client",
+        "exec",
+        "expo",
+        "start",
+        "--web",
+        "--port",
+        "8081"
+      ],
+      "port": 8081
+    },
+    {
+      "name": "client-web",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve@14.2.4",
+        "-s",
+        "apps/client/dist",
+        "-l",
+        "8082"
+      ],
+      "port": 8082
     }
   ]
 }

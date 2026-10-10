@@ -34,7 +34,7 @@ export const NAV: NavGroup[] = [
     items: [
       { key: 'requests', to: '/requests', icon: ClipboardList, perm: 'service_requests.view', ready: true },
       { key: 'tasks', to: '/tasks', icon: SquareCheckBig, perm: 'tasks.view', ready: true },
-      { key: 'documents', to: '/documents', icon: FileText, perm: 'documents.view', ready: false },
+      { key: 'documents', to: '/documents', icon: FileText, perm: 'documents.view', ready: true },
     ],
   },
   {

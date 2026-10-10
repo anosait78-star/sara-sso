@@ -7,6 +7,7 @@
 
 ```
 apps/admin/          لوحة الإدارة — React + Vite + TypeScript + Tailwind (RTL أولًا)
+apps/client/         تطبيق العميل — Expo (React Native) + Expo Router، عربي RTL أولًا
 packages/shared/     أنواع قاعدة البيانات، كتالوج الصلاحيات، أدوات التحقق المشتركة
 supabase/
   migrations/        كل تغييرات قاعدة البيانات (المصدر الوحيد للـSchema)
@@ -36,6 +37,17 @@ pnpm functions:serve     # في نافذة منفصلة — Edge Functions
 pnpm dev                 # لوحة الإدارة على http://localhost:5173
 ```
 
+### تطبيق العميل (Expo)
+
+أنشئ `apps/client/.env.local` من `apps/client/.env.example` (`EXPO_PUBLIC_SUPABASE_URL` و`EXPO_PUBLIC_SUPABASE_ANON_KEY` — المفتاح العام فقط).
+
+```bash
+pnpm client:web          # نسخة الويب للتجربة السريعة
+pnpm client              # ثم امسح الـQR بتطبيق Expo Go على الموبايل
+```
+
+على الموبايل استخدم عنوان الكمبيوتر على الشبكة (مثل `http://192.168.1.20:54321`) بدل `127.0.0.1`. حساب العميل التجريبي موثق في أعلى `supabase/seed.sql`.
+
 حسابات التطوير وكلمة السر الخاصة بها موثقة في أعلى `supabase/seed.sql` (للتطوير المحلي فقط).
 
 ### ملاحظات التشغيل على Windows
@@ -50,6 +62,7 @@ pnpm dev                 # لوحة الإدارة على http://localhost:5173
 | الأمر | الوظيفة |
 |---|---|
 | `pnpm db:reset` | إعادة بناء قاعدة البيانات المحلية من الـmigrations + seed |
+| `pnpm client:web` | تطبيق العميل على الويب (Expo) |
 | `pnpm db:test` | اختبارات pgTAP (الصلاحيات، RLS، التدقيق، CRM، محرك الـWorkflow) |
 | `pnpm db:types` | توليد أنواع TypeScript من قاعدة البيانات إلى `packages/shared` |
 | `pnpm typecheck` | فحص الأنواع لكل الحزم |

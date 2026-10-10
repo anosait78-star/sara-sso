@@ -1,0 +1,76 @@
+import type { Messages } from './ar';
+
+export const en: Messages = {
+  common: {
+    appName: 'SSO', loading: 'Loading…', retry: 'Retry', save: 'Save', cancel: 'Cancel', send: 'Send', back: 'Back',
+    yes: 'Yes', no: 'No', close: 'Close', ok: 'OK', call: 'Call', whatsapp: 'WhatsApp', optional: 'Optional', required: 'Required', more: 'More', all: 'All',
+  },
+  errors: {
+    generic: 'Something went wrong. Please try again.',
+    network: 'Connection failed. Check your internet and try again.',
+    invalidName: 'Enter your full four-part name as on your ID (letters only).',
+    invalidNationalId: 'Invalid national ID.',
+    invalidPhone: 'Invalid phone number (01xxxxxxxxx).',
+    weakPassword: 'Password must be at least 8 characters with letters and digits.',
+    passwordsMismatch: 'Passwords do not match.',
+    termsRequired: 'You must accept the terms and privacy policy.',
+    alreadyRegistered: 'This phone or national ID is already registered. Sign in or contact us.',
+    invalidCredentials: 'Incorrect phone or password.',
+    invalidValue: 'One of the fields has an invalid value.',
+    incomplete: 'Complete the data and upload the required documents first.',
+    notAvailable: 'This service is not available right now.',
+    fileTooLarge: 'The file is larger than allowed ({{size}}MB).',
+    fileType: 'This file type is not allowed.',
+    forbidden: 'Not allowed.',
+  },
+  auth: {
+    tagline: 'Every service… a clear path', lines: 'Real Estate · Insurance · Company Formation · Commercial Loans',
+    login: 'Sign in', phone: 'Phone number', password: 'Password', forgot: 'Forgot your password?', noAccount: 'No account yet?',
+    register: 'Create account', haveAccount: 'Already registered? Sign in', fullName: 'Full name (four parts)', fullNameHint: 'As written on your ID',
+    nationalId: 'National ID', confirmPassword: 'Confirm password', passwordHint: 'At least 8 characters, letters and digits',
+    acceptTerms: 'I accept the terms and privacy policy', registerDone: 'Your account was created',
+    pendingTitle: 'Your account is under review', pendingBody: 'Your details are already registered with us. Our team will review linking your account and contact you soon.',
+    rejectedTitle: 'We could not link your account', rejectedBody: 'We could not verify your details. Please contact us to complete the link.',
+    suspendedTitle: 'Account suspended', suspendedBody: 'Your app account is suspended. Please contact us.',
+    notClient: 'This is not a client account.', forgotTitle: 'Password recovery',
+    forgotBody: 'To protect your account, passwords are reset by our team only. Contact us and we will send you a temporary password after verifying your identity.',
+    changePasswordTitle: 'Change password', changePasswordForced: 'For your security, change the temporary password before continuing.',
+    newPassword: 'New password', changed: 'Password changed', logout: 'Sign out',
+  },
+  tabs: { home: 'Home', requests: 'My requests', services: 'Services', notifications: 'Notifications', account: 'Account' },
+  home: {
+    hello: 'Hello, {{name}}', requiredTitle: 'Needed from you', requiredEmpty: 'Nothing needed from you right now', activeTitle: 'Your open requests',
+    noActive: 'No open requests', newRequest: 'Request a service', stepWaiting: '{{step}} — complete the data and documents',
+    docRejected: 'Rejected document: {{doc}}', latest: 'Latest updates',
+  },
+  requests: {
+    title: 'My requests', active: 'Open', history: 'History', empty: 'No requests',
+    statuses: { draft: 'Draft', submitted: 'Submitted', in_progress: 'In progress', waiting_client: 'Waiting for you', on_hold: 'On hold', completed: 'Completed', cancelled: 'Cancelled' },
+    stepStatuses: { pending: 'Upcoming', active: 'In progress', waiting_client: 'Needed from you', waiting_approval: 'Under review', completed: 'Done', skipped: 'Not needed', returned: 'In progress' },
+    progress: '{{done}} of {{total}} steps', expected: 'Expected: {{date}}', currentStep: 'Current step', yourPart: 'Needed from you in this step',
+    submitPart: 'Send for review', submitted: 'Sent — our team will review it', path: 'Request path', documents: 'Documents', data: 'Data',
+    saveData: 'Save data', saved: 'Saved', messages: 'Messages', cancelReason: 'Cancelled: {{reason}}', expectedOn: 'Expected {{date}}', doneOn: 'Done {{date}}',
+  },
+  docs: {
+    statuses: { pending: 'Required', uploaded: 'Under review', under_review: 'Under review', approved: 'Accepted', rejected: 'Rejected' },
+    upload: 'Upload document', uploadNew: 'Upload a new copy', camera: 'Camera', gallery: 'Photos', file: 'PDF file', uploading: 'Uploading…',
+    uploaded: 'Document uploaded', rejectedReason: 'Rejected: {{reason}}', reused: 'Previously approved copy', maxSize: 'Up to {{size}}MB',
+  },
+  services: {
+    title: 'Services', empty: 'No services available', expected: 'Expected duration: {{count}} working days', steps: 'Service steps',
+    documents: 'Required documents', order: 'Request this service', ordered: 'Your request was sent', notesPlaceholder: 'Notes (optional)', price: 'Service fee: {{price}} EGP',
+  },
+  notifications: { title: 'Notifications', empty: 'No notifications', markAll: 'Mark all as read', today: 'Today', earlier: 'Earlier' },
+  messages: { title: 'Messages', placeholder: 'Write your message…', empty: 'No messages yet. Ask anything about your request.', you: 'You', team: 'SSO team' },
+  account: {
+    title: 'Account', language: 'Language', changePassword: 'Change password', contact: 'Contact us', customerNo: 'Customer no.', phone: 'Phone',
+    nationalId: 'National ID', inquiry: 'General inquiry', inquiryPlaceholder: 'Write your question and our team will contact you', inquirySent: 'Your inquiry was sent',
+  },
+  dynamic: {
+    errors: {
+      required: 'Required', not_a_number: 'Invalid number', below_min: 'Below {{min}}', above_max: 'Above {{max}}', too_short: 'Too short',
+      too_long: 'Too long', invalid_format: 'Invalid format', invalid_option: 'Choose from the list', invalid_date: 'Invalid date (YYYY-MM-DD)',
+      invalid_phone: 'Invalid phone', invalid_email: 'Invalid email', invalid_national_id: 'Invalid national ID',
+    },
+  },
+};
