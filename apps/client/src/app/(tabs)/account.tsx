@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { Switch, View } from 'react-native';
 import { ContactButtons } from '@/components/ContactButtons';
 import { Button, Card, colors, Field, Input, Ltr, Notice, Row, Screen, T } from '@/components/ui';
 import { setLocale, useLocale } from '@/i18n';
@@ -56,6 +56,23 @@ export default function AccountScreen() {
   });
   const nm = (x: { name_ar: string; name_en: string | null } | null) => (x ? (locale === 'en' ? x.name_en ?? x.name_ar : x.name_ar) : null);
   const egp = (n: number | null) => (n == null ? '—' : `${Number(n).toLocaleString('en')} EGP`);
+  const CATEGORIES = ['requests', 'documents', 'payments', 'messages', 'insurance', 'loans'] as const;
+  const prefs = useQuery({
+    queryKey: ['notification_preferences'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('notification_preferences').select('category, push');
+      if (error) throw error;
+      return Object.fromEntries((data ?? []).map((p) => [p.category, p.push])) as Record<string, boolean>;
+    },
+  });
+  const setPref = useMutation({
+    mutationFn: async ({ category, push }: { category: string; push: boolean }) => {
+      const { data: u } = await supabase.auth.getUser();
+      const { error } = await supabase.from('notification_preferences').upsert({ user_id: u.user!.id, category, push });
+      if (error) throw error;
+    },
+    onSuccess: () => void prefs.refetch(),
+  });
   const send = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.rpc('send_request_message', { p_request_id: null as unknown as string, p_body: inquiry.trim() });
@@ -130,6 +147,18 @@ export default function AccountScreen() {
           ))}
         </Card>
       )}
+
+      <Card>
+        <T v="h2">{t('account.notifications')}</T>
+        <T v="small">{t('account.notificationsHint')}</T>
+        {CATEGORIES.map((c) => (
+          <Row key={c} style={{ borderTopWidth: 1, borderTopColor: colors.line, paddingTop: 6 }}>
+            <T v="body" style={{ flex: 1 }}>{t(`account.notificationCategories.${c}`)}</T>
+            <Switch testID={`pref-${c}`} value={prefs.data?.[c] ?? true} onValueChange={(v) => setPref.mutate({ category: c, push: v })}
+              trackColor={{ true: colors.brand, false: colors.line }} thumbColor="#fff" />
+          </Row>
+        ))}
+      </Card>
 
       <Button title={t('account.changePassword')} variant="secondary" icon="key-outline" onPress={() => router.push('/change-password')} />
 

@@ -3,6 +3,7 @@ import { Building2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { NotificationTemplatesCard } from '@/components/NotificationTemplates';
 import { ReferenceListsCard } from '@/components/ReferenceLists';
 import { Button, Card, CardHeader, Field, Input, PageHeader, Spinner } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
@@ -70,6 +71,7 @@ export function SettingsPage() {
         </div>
       </Card>
       <ReferenceListsCard editable={editable} />
+      <NotificationTemplatesCard editable={editable} />
     </div>
   );
 }

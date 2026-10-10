@@ -104,7 +104,14 @@ export const ar = {
   },
   notifications: { title: 'الإشعارات', empty: 'لا توجد إشعارات', markAll: 'تحديد الكل كمقروء', today: 'اليوم', earlier: 'سابقًا' },
   messages: { title: 'الرسائل', placeholder: 'اكتب رسالتك…', empty: 'لا توجد رسائل بعد. اسأل عن أي شيء يخص طلبك.', you: 'أنت', team: 'فريق SSO' },
+  payments: {
+    title: 'المدفوعات', fee: 'الرسوم', paid: 'المدفوع', outstanding: 'المتبقي',
+    methods: { cash: 'نقدي', bank_transfer: 'تحويل بنكي', card: 'بطاقة', wallet: 'محفظة', cheque: 'شيك' },
+    statuses: { paid: 'مدفوع', refunded: 'مردود', cancelled: 'ملغى' },
+  },
   account: {
+    notifications: 'إشعارات الموبايل', notificationsHint: 'اختر التنبيهات التي تصلك على الهاتف. ستظل كل التحديثات ظاهرة في الإشعارات داخل التطبيق.',
+    notificationCategories: { requests: 'تحديثات الطلبات', documents: 'المستندات', payments: 'المدفوعات', messages: 'الرسائل', insurance: 'وثائق التأمين', loans: 'طلبات التمويل' },
     companies: 'شركاتي', commercialRegister: 'السجل التجاري', taxCard: 'البطاقة الضريبية',
     companyStatus: { draft: 'قيد الإعداد', in_progress: 'جاري التأسيس', established: 'تم التأسيس', closed: 'مغلقة' },
     policies: 'وثائق التأمين', insurer: 'شركة التأمين', policyNo: 'رقم الوثيقة', validUntil: 'سارية حتى',

@@ -16,6 +16,7 @@ import { CustomerRequests } from '@/components/requests/CustomerRequests';
 import { ClientAccessCard } from '@/components/requests/ClientAccess';
 import { CustomerCompaniesCard } from '@/components/requests/CompanyFileCard';
 import { CustomerLoansCard, CustomerPoliciesCard } from '@/components/requests/ModuleCards';
+import { CustomerPaymentsCard } from '@/components/payments/Payments';
 
 type Tab = 'overview' | 'requests' | 'followups' | 'appointments' | 'notes' | 'timeline';
 
@@ -149,6 +150,7 @@ export function CustomerPage() {
                 )}
               </Card>
               {c.customer_type === 'company' && <ContactsCard customerId={c.id} />}
+              <CustomerPaymentsCard customerId={c.id} />
               <CustomerCompaniesCard customerId={c.id} />
               <CustomerPoliciesCard customerId={c.id} />
               <CustomerLoansCard customerId={c.id} />

@@ -1630,6 +1630,57 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          category: string
+          push: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          push?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          push?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_templates: {
+        Row: {
+          body_tpl: string
+          category: string
+          description_ar: string | null
+          event_key: string
+          push_enabled: boolean
+          title_tpl: string
+          updated_at: string
+        }
+        Insert: {
+          body_tpl?: string
+          category: string
+          description_ar?: string | null
+          event_key: string
+          push_enabled?: boolean
+          title_tpl?: string
+          updated_at?: string
+        }
+        Update: {
+          body_tpl?: string
+          category?: string
+          description_ar?: string | null
+          event_key?: string
+          push_enabled?: boolean
+          title_tpl?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -1641,6 +1692,11 @@ export type Database = {
           event_key: string
           id: string
           link: string | null
+          push_attempted_at: string | null
+          push_body: string | null
+          push_error: string | null
+          push_status: string | null
+          push_title: string | null
           read_at: string | null
           recipient_user_id: string
           title: string
@@ -1655,6 +1711,11 @@ export type Database = {
           event_key: string
           id?: string
           link?: string | null
+          push_attempted_at?: string | null
+          push_body?: string | null
+          push_error?: string | null
+          push_status?: string | null
+          push_title?: string | null
           read_at?: string | null
           recipient_user_id: string
           title: string
@@ -1669,11 +1730,118 @@ export type Database = {
           event_key?: string
           id?: string
           link?: string | null
+          push_attempted_at?: string | null
+          push_body?: string | null
+          push_error?: string | null
+          push_status?: string | null
+          push_title?: string | null
           read_at?: string | null
           recipient_user_id?: string
           title?: string
         }
         Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          currency: string
+          customer_id: string
+          department_id: string | null
+          id: string
+          method: Database["public"]["Enums"]["payment_method"]
+          notes: string | null
+          owner_employee_id: string | null
+          paid_at: string
+          payment_no: string | null
+          recorded_by: string | null
+          reference_no: string | null
+          service_request_id: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+          updated_at: string
+          void_reason: string | null
+          voided_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id: string
+          department_id?: string | null
+          id?: string
+          method?: Database["public"]["Enums"]["payment_method"]
+          notes?: string | null
+          owner_employee_id?: string | null
+          paid_at?: string
+          payment_no?: string | null
+          recorded_by?: string | null
+          reference_no?: string | null
+          service_request_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          updated_at?: string
+          void_reason?: string | null
+          voided_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          customer_id?: string
+          department_id?: string | null
+          id?: string
+          method?: Database["public"]["Enums"]["payment_method"]
+          notes?: string | null
+          owner_employee_id?: string | null
+          paid_at?: string
+          payment_no?: string | null
+          recorded_by?: string | null
+          reference_no?: string | null
+          service_request_id?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          updated_at?: string
+          void_reason?: string | null
+          voided_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_owner_employee_id_fkey"
+            columns: ["owner_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_service_request_id_fkey"
+            columns: ["service_request_id"]
+            isOneToOne: false
+            referencedRelation: "service_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       permissions: {
         Row: {
@@ -2972,6 +3140,18 @@ export type Database = {
         Args: { p_national_id: string; p_phone: string }
         Returns: string
       }
+      claim_push_batch: {
+        Args: { p_limit?: number }
+        Returns: {
+          body: string
+          entity_id: string
+          entity_type: string
+          id: string
+          link: string
+          title: string
+          tokens: string[]
+        }[]
+      }
       clear_must_change_password: { Args: never; Returns: undefined }
       client_create_request: {
         Args: { p_notes?: string; p_service_id: string }
@@ -3026,7 +3206,9 @@ export type Database = {
       }
       create_workflow_draft: { Args: { p_service_id: string }; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      dashboard_summary: { Args: never; Returns: Json }
       delete_workflow_step: { Args: { p_step_id: string }; Returns: undefined }
+      finish_push_batch: { Args: { p_results: Json }; Returns: undefined }
       get_company_contact: { Args: never; Returns: Json }
       get_my_permissions: {
         Args: never
@@ -3161,6 +3343,17 @@ export type Database = {
         Args: { p_step_ids: string[]; p_workflow_id: string }
         Returns: undefined
       }
+      report_employees: {
+        Args: { p_from: string; p_to: string }
+        Returns: Json
+      }
+      report_finance: { Args: { p_from: string; p_to: string }; Returns: Json }
+      report_lines: { Args: never; Returns: Json }
+      report_operations: {
+        Args: { p_from: string; p_to: string }
+        Returns: Json
+      }
+      report_sales: { Args: { p_from: string; p_to: string }; Returns: Json }
       request_new_document_copy: {
         Args: { p_document_id: string; p_note: string }
         Returns: undefined
@@ -3181,6 +3374,10 @@ export type Database = {
       send_request_message: {
         Args: { p_body: string; p_request_id: string }
         Returns: string
+      }
+      set_request_amount: {
+        Args: { p_amount: number; p_request_id: string }
+        Returns: undefined
       }
       set_request_hold: {
         Args: { p_hold: boolean; p_reason?: string; p_request_id: string }
@@ -3289,6 +3486,8 @@ export type Database = {
         | "rejected"
         | "disbursed"
         | "cancelled"
+      payment_method: "cash" | "bank_transfer" | "card" | "wallet" | "cheque"
+      payment_status: "paid" | "refunded" | "cancelled"
       permission_scope: "own" | "department" | "all"
       policy_status:
         | "pending"
@@ -3527,6 +3726,8 @@ export const Constants = {
         "disbursed",
         "cancelled",
       ],
+      payment_method: ["cash", "bank_transfer", "card", "wallet", "cheque"],
+      payment_status: ["paid", "refunded", "cancelled"],
       permission_scope: ["own", "department", "all"],
       policy_status: [
         "pending",

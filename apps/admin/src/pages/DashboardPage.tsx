@@ -1,9 +1,10 @@
 import { ACTION_LABELS, MODULE_LABELS, PERMISSION_MODULES, SCOPE_LABELS, type PermissionAction, type PermissionModule } from '@sso/shared';
 import { Link } from '@tanstack/react-router';
-import { Layers, Sparkles } from 'lucide-react';
+import { Layers } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MyWork } from '@/components/dashboard/MyWork';
+import { Overview } from '@/components/dashboard/Overview';
 import { Badge, Card, CardHeader } from '@/components/ui';
 import { NAV } from '@/layout/nav';
 import { useAuth } from '@/lib/auth';
@@ -37,19 +38,9 @@ export function DashboardPage() {
         </p>
       </div>
 
-      <MyWork />
+      {can('reports', 'view') && <Overview />}
 
-      <Card className="overflow-hidden">
-        <div className="flex flex-col gap-4 bg-navy p-5 text-white md:flex-row md:items-center">
-          <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-navy-700 text-sky">
-            <Sparkles className="size-6" />
-          </span>
-          <div>
-            <div className="text-lg font-bold">{t('dashboard.phaseTitle')}</div>
-            <p className="mt-1 text-sm leading-relaxed text-[#b9c8e2]">{t('dashboard.phaseBody')}</p>
-          </div>
-        </div>
-      </Card>
+      <MyWork />
 
       {quick.length > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

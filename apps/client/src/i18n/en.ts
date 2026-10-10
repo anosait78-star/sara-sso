@@ -62,7 +62,14 @@ export const en: Messages = {
   },
   notifications: { title: 'Notifications', empty: 'No notifications', markAll: 'Mark all as read', today: 'Today', earlier: 'Earlier' },
   messages: { title: 'Messages', placeholder: 'Write your message…', empty: 'No messages yet. Ask anything about your request.', you: 'You', team: 'SSO team' },
+  payments: {
+    title: 'Payments', fee: 'Fee', paid: 'Paid', outstanding: 'Outstanding',
+    methods: { cash: 'Cash', bank_transfer: 'Bank transfer', card: 'Card', wallet: 'Wallet', cheque: 'Cheque' },
+    statuses: { paid: 'Paid', refunded: 'Refunded', cancelled: 'Cancelled' },
+  },
   account: {
+    notifications: 'Phone notifications', notificationsHint: 'Choose which alerts reach your phone. Every update still appears in the in-app notifications.',
+    notificationCategories: { requests: 'Request updates', documents: 'Documents', payments: 'Payments', messages: 'Messages', insurance: 'Insurance policies', loans: 'Financing requests' },
     companies: 'My companies', commercialRegister: 'Commercial register', taxCard: 'Tax card',
     companyStatus: { draft: 'Being prepared', in_progress: 'Being formed', established: 'Established', closed: 'Closed' },
     policies: 'Insurance policies', insurer: 'Insurer', policyNo: 'Policy no.', validUntil: 'Valid until',

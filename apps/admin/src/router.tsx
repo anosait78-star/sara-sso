@@ -7,7 +7,10 @@ import { CompanyFilePage } from './pages/CompanyFilePage';
 import { InsurancePage } from './pages/InsurancePage';
 import { LoanPage } from './pages/LoanPage';
 import { LoansPage } from './pages/LoansPage';
+import { PaymentsPage } from './pages/PaymentsPage';
 import { PolicyPage } from './pages/PolicyPage';
+import { ReceiptPage } from './pages/ReceiptPage';
+import { ReportsPage } from './pages/ReportsPage';
 import { CompanyFilesPage } from './pages/CompanyFilesPage';
 import { CustomerPage } from './pages/CustomerPage';
 import { CustomersPage } from './pages/CustomersPage';
@@ -33,6 +36,8 @@ const rootRoute = createRootRoute({ component: Outlet, notFoundComponent: NotFou
 
 const loginRoute = createRoute({ getParentRoute: () => rootRoute, path: '/login', component: LoginPage });
 const changePasswordRoute = createRoute({ getParentRoute: () => rootRoute, path: '/change-password', component: ChangePasswordPage });
+// printable receipt: own tab, no app shell (RLS decides what can be read)
+const receiptRoute = createRoute({ getParentRoute: () => rootRoute, path: '/receipt/$id', component: ReceiptPage });
 
 // Everything below requires an active staff session (checked in AppShell).
 const appRoute = createRoute({ getParentRoute: () => rootRoute, id: 'app', component: AppShell });
@@ -51,6 +56,7 @@ const page = (path: string, perm: string, Component: () => React.JSX.Element) =>
 const routeTree = rootRoute.addChildren([
   loginRoute,
   changePasswordRoute,
+  receiptRoute,
   appRoute.addChildren([
     page('/', 'dashboard.view', DashboardPage),
     page('/customers', 'customers.view', CustomersPage),
@@ -69,6 +75,8 @@ const routeTree = rootRoute.addChildren([
     page('/insurance/$id', 'insurance.view', PolicyPage),
     page('/loans', 'loans.view', LoansPage),
     page('/loans/$id', 'loans.view', LoanPage),
+    page('/payments', 'payments.view', PaymentsPage),
+    page('/reports', 'reports.view', ReportsPage),
     page('/services', 'services_config.view', ServicesPage),
     page('/services/$id', 'services_config.view', ServicePage),
     page('/services/$id/workflow', 'services_config.view', WorkflowBuilderPage),

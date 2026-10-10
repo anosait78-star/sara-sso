@@ -49,8 +49,8 @@ export const NAV: NavGroup[] = [
   {
     key: 'finance',
     items: [
-      { key: 'payments', to: '/payments', icon: Wallet, perm: 'payments.view', ready: false },
-      { key: 'reports', to: '/reports', icon: ChartColumn, perm: 'reports.view', ready: false },
+      { key: 'payments', to: '/payments', icon: Wallet, perm: 'payments.view', ready: true },
+      { key: 'reports', to: '/reports', icon: ChartColumn, perm: 'reports.view', ready: true },
     ],
   },
   {

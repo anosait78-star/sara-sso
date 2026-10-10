@@ -500,3 +500,29 @@ begin
   perform app.run_policy_reminders();
 end;
 $do$;
+
+-- ---------------------------------------------------------------------
+-- Payments (Phase 7), recorded by the accountant (هبة):
+--   REQ-000004 tax card 2,500 paid in full · REQ-000001 LLC 15,000: 10,000 paid in two receipts, 5,000 outstanding
+--   REQ-000003 loan file 5,000 still outstanding · one receipt cancelled (wrong amount) for the audit trail
+-- ---------------------------------------------------------------------
+do $do$
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', '55555555-5555-4555-8555-555555555555', 'role', 'authenticated')::text, true);
+  insert into public.payments (customer_id, service_request_id, amount, method, paid_at, reference_no, notes) values
+    ((select customer_id from public.service_requests where request_no = 'REQ-000004'), (select id from public.service_requests where request_no = 'REQ-000004'),
+     2500, 'cash', now() - interval '35 days', null, 'سداد كامل'),
+    ((select customer_id from public.service_requests where request_no = 'REQ-000001'), (select id from public.service_requests where request_no = 'REQ-000001'),
+     5000, 'cash', now() - interval '20 days', null, 'دفعة مقدمة'),
+    ((select customer_id from public.service_requests where request_no = 'REQ-000001'), (select id from public.service_requests where request_no = 'REQ-000001'),
+     5000, 'bank_transfer', now() - interval '2 days', 'TRX-88213', 'الدفعة الثانية'),
+    ((select customer_id from public.service_requests where request_no = 'REQ-000003'), (select id from public.service_requests where request_no = 'REQ-000003'),
+     500, 'wallet', now() - interval '1 day', 'VF-1022', null);
+  update public.payments set status = 'cancelled', void_reason = 'المبلغ مسجل بالخطأ — العميل لم يدفع'
+   where service_request_id = (select id from public.service_requests where request_no = 'REQ-000003');
+  perform set_config('request.jwt.claims', '', true);
+end;
+$do$;
+
+-- Local push dispatcher URL (production: set the same Vault secret to the project's function URL).
+select vault.create_secret('http://kong:8000/functions/v1/dispatch-notification', 'push_dispatch_url', 'dispatch-notification endpoint for pg_cron');

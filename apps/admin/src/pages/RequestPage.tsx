@@ -16,6 +16,7 @@ import { DocumentReview } from '@/components/requests/DocumentReview';
 import { RequestMessages } from '@/components/requests/RequestMessages';
 import { CompanyFileCard } from '@/components/requests/CompanyFileCard';
 import { LoanCard, PolicyCard } from '@/components/requests/ModuleCards';
+import { RequestPaymentsCard } from '@/components/payments/Payments';
 import { useAuth } from '@/lib/auth';
 import { fmtDate, toLocalInput, fromLocalInput, useEmployeeOptions, useLang } from '@/lib/crm';
 import {
@@ -185,6 +186,7 @@ export function RequestPage() {
           {(r.loan_application_id || r.service?.module_key === 'loans') && (
             <div className="lg:hidden"><LoanCard requestId={r.id} customerId={r.customer_id} linkedId={r.loan_application_id} open={open} /></div>
           )}
+          <div className="lg:hidden"><RequestPaymentsCard request={r} open={r.status !== 'cancelled'} /></div>
 
           <div className="flex gap-1 overflow-x-auto border-b border-line">
             {tabs.map((k) => (
@@ -246,6 +248,7 @@ export function RequestPage() {
           {(r.loan_application_id || r.service?.module_key === 'loans') && (
             <LoanCard requestId={r.id} customerId={r.customer_id} linkedId={r.loan_application_id} open={open} />
           )}
+          <RequestPaymentsCard request={r} open={r.status !== 'cancelled'} />
           {r.notes && <Card className="p-4 text-sm"><div className="mb-1 text-xs font-bold text-ink-2">{t('requests.notes')}</div>{r.notes}</Card>}
           <Timeline requestId={r.id} />
         </div>

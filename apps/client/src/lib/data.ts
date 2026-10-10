@@ -8,10 +8,13 @@ export type DocStatus = 'pending' | 'uploaded' | 'under_review' | 'approved' | '
 
 export interface ClientRequest {
   id: string; request_no: string; status: RequestStatus; due_at: string | null; created_at: string; completed_at: string | null;
-  cancelled_reason: string | null; current_step_id: string | null;
+  cancelled_reason: string | null; current_step_id: string | null; total_amount: number | null; paid_amount: number;
   service: { id: string; name_ar: string; name_en: string | null; icon: string | null } | null;
 }
-export const REQUEST_SELECT = 'id, request_no, status, due_at, created_at, completed_at, cancelled_reason, current_step_id, service:services(id, name_ar, name_en, icon)';
+export const REQUEST_SELECT = 'id, request_no, status, due_at, created_at, completed_at, cancelled_reason, current_step_id, total_amount, paid_amount, service:services(id, name_ar, name_en, icon)';
+
+export interface ClientPayment { id: string; payment_no: string; amount: number; method: string; status: 'paid' | 'refunded' | 'cancelled'; paid_at: string }
+export const egp = (n: number | null | undefined) => (n == null ? '—' : `${Number(n).toLocaleString('en', { maximumFractionDigits: 2 })} EGP`);
 
 /** Client view of a step (RLS returns client-visible steps only). */
 export interface ClientStep {

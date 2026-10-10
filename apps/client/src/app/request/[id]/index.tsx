@@ -9,7 +9,7 @@ import { DynamicFields } from '@/components/DynamicFields';
 import { Badge, Button, Card, colors, Loading, Ltr, Notice, Progress, Row, T } from '@/components/ui';
 import { useLocale } from '@/i18n';
 import {
-  DOC_SELECT, fmtDate, nameOf, OPEN, progressOf, REQUEST_SELECT, STATUS_TONE, STEP_SELECT, type ClientDocument, type ClientRequest, type ClientStep,
+  DOC_SELECT, egp, fmtDate, nameOf, OPEN, progressOf, REQUEST_SELECT, STATUS_TONE, STEP_SELECT, type ClientDocument, type ClientPayment, type ClientRequest, type ClientStep,
 } from '@/lib/data';
 import { supabase } from '@/lib/supabase';
 
@@ -24,12 +24,13 @@ export default function RequestScreen() {
   const q = useQuery({
     queryKey: ['request', id],
     queryFn: async () => {
-      const [r, s, d, v, m] = await Promise.all([
+      const [r, s, d, v, m, p] = await Promise.all([
         supabase.from('service_requests').select(REQUEST_SELECT).eq('id', id).maybeSingle(),
         supabase.from('service_request_steps').select(STEP_SELECT).eq('request_id', id).order('sort_order'),
         supabase.from('documents').select(DOC_SELECT).eq('request_id', id).order('created_at'),
         supabase.from('request_field_values').select('request_step_id, field_key, value').eq('request_id', id),
         supabase.from('request_messages').select('id', { count: 'exact', head: true }).eq('request_id', id).eq('sender_type', 'staff').is('read_at', null),
+        supabase.from('payments').select('id, payment_no, amount, method, status, paid_at').eq('service_request_id', id).order('paid_at', { ascending: false }),
       ]);
       if (r.error) throw r.error;
       return {
@@ -38,6 +39,7 @@ export default function RequestScreen() {
         docs: (d.data ?? []) as unknown as ClientDocument[],
         values: (v.data ?? []) as { request_step_id: string; field_key: string; value: unknown }[],
         unread: m.count ?? 0,
+        payments: (p.data ?? []) as ClientPayment[],
       };
     },
   });
@@ -129,6 +131,30 @@ export default function RequestScreen() {
           <T v="h2">{t('requests.documents')}</T>
           {otherDocs.map((d) => (
             <DocumentRow key={d.id} doc={d} canUpload={open && (d.status === 'rejected' || (d.status === 'pending' && d.request_step_id === current?.id))} onUploaded={refresh} />
+          ))}
+        </Card>
+      )}
+
+      {(r.total_amount != null || q.data!.payments.length > 0) && (
+        <Card>
+          <T v="h2">{t('payments.title')}</T>
+          <Row>
+            {([[t('payments.fee'), r.total_amount, colors.navy], [t('payments.paid'), r.paid_amount, colors.success],
+              [t('payments.outstanding'), r.total_amount != null ? Number(r.total_amount) - Number(r.paid_amount) : null, colors.danger]] as const).map(([k, v, c]) => (
+              <View key={k} style={{ flex: 1, gap: 2 }}>
+                <T v="small">{k}</T>
+                <Ltr v="label" style={{ color: k === t('payments.outstanding') && !v ? colors.navy : c }}>{egp(v)}</Ltr>
+              </View>
+            ))}
+          </Row>
+          {q.data!.payments.map((p) => (
+            <Row key={p.id} style={{ borderTopWidth: 1, borderTopColor: colors.line, paddingTop: 8 }}>
+              <View style={{ flex: 1, gap: 2 }}>
+                <Ltr v="label" style={{ color: p.status === 'paid' ? colors.navy : colors.ink3, textDecorationLine: p.status === 'paid' ? 'none' : 'line-through' }}>{egp(p.amount)}</Ltr>
+                <T v="small">{t(`payments.methods.${p.method}`)} · {fmtDate(p.paid_at, locale)} · {p.payment_no}</T>
+              </View>
+              {p.status !== 'paid' && <Badge label={t(`payments.statuses.${p.status}`)} tone="red" />}
+            </Row>
           ))}
         </Card>
       )}
